@@ -1,23 +1,30 @@
-HELP.md
+### Build ###
 target/
-.mvn/wrapper/maven-wrapper.jar
+build/
+.gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+### Maven Wrapper ###
+.mvn/wrapper/maven-wrapper.jar
+
+### STS / Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
 .settings
 .springBeans
-.sts4-cache
+.sts4-cache/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -25,9 +32,44 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+### Java ###
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.nar
+*.ear
+hs_err_pid*
+replay_pid*
+
+### Spring Boot ###
+HELP.md
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Env / Secret ###
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+
+### Logs ###
+logs/
+*.out
+
+### Application local config ###
+application-local.yml
+application-local.yaml
+application-local.properties
+application-secret.yml
+application-secret.yaml
+application-secret.properties
