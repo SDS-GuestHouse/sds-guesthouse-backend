@@ -1,6 +1,11 @@
+package com.sds_guesthouse.model.service;
+
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dto.HostSignupRequestDto;
+import com.sds_guesthouse.model.entity.Host;
 import com.sds_guesthouse.model.mapper.HostMapper;
+import com.sds_guesthouse.util.OpenCrypt;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +26,24 @@ public class HostServiceImpl implements HostService {
             throw new IllegalArgumentException("Duplicate ID: " + dto.getUserId());
         }
 
-        // 2. 서비스 정책 체크 (명시적 안내 영역 - 예시)
-        // 만약 특정 블랙리스트 전화번호나 정책상 가입 불가 조건이 있다면?
-        if (dto.getPhone().contains("000-0000")) {
-            throw new ExplicitMessageException("해당 연락처로는 가입이 불가능합니다. 고객센터에 문의하세요.");
-        }
+        // 2. 비밀번호 암호화 (SHA-256 + Salt)
+        // Salt는 보통 유저의 ID나 생성일자 등을 섞어서 암호문의 예측을 어렵게 만듭니다.
+        byte[] encryptedPassword = OpenCrypt.getSHA256(dto.getPassword(), dto.getUserId());
+        String hexPassword = OpenCrypt.byteArrayToHex(encryptedPassword);
+        
+        // 3. DTO -> Entity 변환 (빌더 패턴 활용)
+        Host host = Host.builder()
+                .userId(dto.getUserId())
+                .password(hexPassword) // 암호화된 비번 주입
+                .name(dto.getName())
+                .phone(dto.getPhone())
+                .build();
 
-        // 3. 비밀번호 암호화 (추후 Security 설정 후 적용)
-        // String encodedPassword = passwordEncoder.encode(dto.getPassword());
-
-        // 4. DB 저장 (MyBatis 호출)
-        int result = hostMapper.insertHost(dto);
+        // 4. DB 저장 호출
+        int result = hostMapper.insertHost(host);
         
         if (result == 0) {
-            throw new RuntimeException("회원가입 중 서버 오류가 발생했습니다.");
+            throw new ExplicitMessageException("회원가입 중 서버 오류가 발생했습니다.");
         }
     }
 }
