@@ -3,7 +3,17 @@ package com.sds_guesthouse.model.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "password") // 로그 찍을 때 비밀번호는 가려주는 센스!
 public class HostSignupRequestDto {
 	
 	@NotBlank(message = "아이디는 필수 입력 값입니다.")
@@ -21,5 +31,5 @@ public class HostSignupRequestDto {
     @NotBlank(message = "연락처는 필수 입력 값입니다.")
     @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)")
     private String phone;
-
+    
 }

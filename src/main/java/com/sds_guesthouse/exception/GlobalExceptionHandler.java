@@ -1,3 +1,5 @@
+package com.sds_guesthouse.exception;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +47,21 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.badRequest().body(response);
     }
+    
+    // 3. 커스텀 예외 (메시지를 명시적으로 클라이언트에게 전달해야 하는 경우)
+    @ExceptionHandler(ExplicitMessageException.class)
+    public ResponseEntity<Map<String, String>> handleExplicitMessageException(ExplicitMessageException ex) {
+        // 개발자용 로그는 찍되, 레벨을 WARN 정도로 낮춰도 좋습니다.
+        log.warn("명시적 메시지 예외 발생: {}", ex.getMessage());
 
-    // 3. 그 외 알 수 없는 모든 예외 (보안상 상세 내용 숨김)
+        Map<String, String> response = new HashMap<>();
+        // 생성자로 넘긴 메시지를 '명시적으로' 그대로 전달
+        response.put("message", ex.getMessage()); 
+        
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    // 4. 그 외 알 수 없는 모든 예외 (보안상 상세 내용 숨김)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
     	log.error("서버 내부 에러 발생: ", ex); // StackTrace를 위해 ex 전체 기록
