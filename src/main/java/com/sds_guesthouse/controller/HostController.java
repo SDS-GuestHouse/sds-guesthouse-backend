@@ -1,3 +1,5 @@
+package com.sds_guesthouse.controller;
+
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sds_guesthouse.model.dto.HostSignupRequestDto;
+import com.sds_guesthouse.model.service.HostService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HostController {
 
-//    private final HostService hostService;
+    private final HostService hostService;
 
     /**
      * 호스트 회원가입 API
