@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.sds_guesthouse.model.dto.HouseCreateRequestDto;
 import com.sds_guesthouse.model.service.HouseService;
+import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class HouseController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> createHouse(
-            @Valid @RequestBody HouseCreateRequestDto dto) {
+            @Valid @RequestBody HouseRequestDto dto) {
 
         houseService.createHouse(dto);
 
@@ -43,4 +43,17 @@ public class HouseController {
 
         return ResponseEntity.ok(house);
     }
+    
+    @PutMapping("/{houseId}")
+    public ResponseEntity<Map<String, String>> updateHouse(
+        @PathVariable Long houseId, 
+        @Valid @RequestBody HouseRequestDto dto) {
+
+    houseService.updateHouse(houseId, dto);
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "숙소 정보가 성공적으로 수정되었습니다.");
+
+    return ResponseEntity.ok(response);
+}
 }

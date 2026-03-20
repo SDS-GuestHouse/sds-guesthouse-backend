@@ -30,18 +30,31 @@
     
 	<select id="findById" resultType="com.sds_guesthouse.model.entity.House">
 	    SELECT
-	        house_id,
-	        host_id,
+	        house_id AS houseId,
+	        host_id AS hostId,
 	        name,
 	        address,
 	        price,
-	        max_guests,
+	        max_guests AS maxGuests,
 	        description,
 	        status,
-	        created_at,
-	        updated_at
+	        created_at AS createdAt,
+	        updated_at AS updatedAt
 	    FROM houses
 	    WHERE house_id = #{houseId}
-	</select>    
+	</select>   
+
+	<update id="updateHouse" parameterType="com.sds_guesthouse.model.entity.House">
+	    UPDATE houses
+	    SET
+	        name = #{name},
+	        address = #{address},
+	        price = #{price},
+	        max_guests = #{maxGuests},
+	        description = #{description},
+	        status = #{status},
+	        updated_at = NOW()
+	    WHERE house_id = #{houseId}
+	</update>
 
 </mapper>
