@@ -7,18 +7,18 @@
 
     <select id="countByUserId" resultType="int">
         SELECT COUNT(*)
-        FROM guest
+        FROM guests
         WHERE user_id = #{userId}
     </select>
 
     <insert id="insertGuest">
-        INSERT INTO guest (user_id, password, name, phone)
+        INSERT INTO guests (user_id, password, name, phone)
         VALUES (#{userId}, #{password}, #{name}, #{phone})
     </insert>
 
     <select id="countByUserIdAndPassword" resultType="int">
         SELECT COUNT(*)
-        FROM guest
+        FROM guests
         WHERE user_id = #{userId}
           AND password = #{password}
     </select>
