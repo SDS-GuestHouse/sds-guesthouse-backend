@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.sds_guesthouse.model.dto.HouseCreateRequestDto;
+import com.sds_guesthouse.model.dto.HouseRequestDto;
 import com.sds_guesthouse.model.service.HouseService;
 import com.sds_guesthouse.model.entity.House;
 
@@ -26,7 +26,7 @@ public class HouseController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> createHouse(
-            @Valid @RequestBody HouseCreateRequestDto dto) {
+            @Valid @RequestBody HouseRequestDto dto) {
 
         houseService.createHouse(dto);
 

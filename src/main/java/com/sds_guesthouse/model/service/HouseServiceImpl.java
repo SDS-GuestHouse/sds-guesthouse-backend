@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
-import com.sds_guesthouse.model.dto.HouseCreateRequestDto;
+import com.sds_guesthouse.model.dto.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 
@@ -19,7 +19,7 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     @Transactional
-    public void createHouse(HouseCreateRequestDto dto) {
+    public void createHouse(HouseRequestDto dto) {
 
         // TODO: 나중에 로그인 붙이면 실제 hostId 가져오기
         Long hostId = getCurrentHostId();
