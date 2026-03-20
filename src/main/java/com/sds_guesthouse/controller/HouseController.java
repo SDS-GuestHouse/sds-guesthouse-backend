@@ -49,11 +49,21 @@ public class HouseController {
         @PathVariable Long houseId, 
         @Valid @RequestBody HouseRequestDto dto) {
 
-    houseService.updateHouse(houseId, dto);
+	    houseService.updateHouse(houseId, dto);
+	
+	    Map<String, String> response = new HashMap<>();
+	    response.put("message", "숙소 정보가 성공적으로 수정되었습니다.");
+	
+	    return ResponseEntity.ok(response);
+    }
+    
+    @DeleteMapping("/{houseId}")
+    public ResponseEntity<Map<String, String>> deleteHouse(@PathVariable Long houseId) {
+        houseService.deleteHouse(houseId);
 
-    Map<String, String> response = new HashMap<>();
-    response.put("message", "숙소 정보가 성공적으로 수정되었습니다.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "숙소 삭제 요청이 완료되었습니다. 관리자 승인 대기 중입니다.");
 
-    return ResponseEntity.ok(response);
-}
+        return ResponseEntity.ok(response);
+    }
 }

@@ -81,4 +81,23 @@ public class HouseServiceImpl implements HouseService {
             throw new ExplicitMessageException("숙소 정보 수정에 실패했습니다.");
         }
     }
+    
+    @Override
+    @Transactional
+    public void deleteHouse(Long houseId) {
+        // 1. 숙소 정보 조회
+        House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new ExplicitMessageException("해당 숙소가 존재하지 않습니다.");
+        }
+
+        // 2. 숙소의 상태를 DELETED_PENDING로 업데이트
+        house.setStatus(HouseStatus.DELETE_PENDING);
+        
+        // 3. DB에 업데이트
+        int result = houseMapper.updateHouse(house);
+        if (result == 0) {
+            throw new ExplicitMessageException("숙소 삭제 요청에 실패했습니다.");
+        }
+    }
 }
