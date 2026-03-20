@@ -56,7 +56,7 @@ public class HostServiceImpl implements HostService {
     
     @Override
     public Host login(HostSigninRequestDto dto) {
-        // 1. 아이디로 유저 조회
+        // 1. 야이디로 유저 조회
         Host host = hostMapper.findByUserId(dto.getUserId());
 
         // 2. 존재하지 않거나 비밀번호 불일치 시 동일한 예외 발생
