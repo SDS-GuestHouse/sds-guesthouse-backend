@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/houses")
+@RequestMapping("/api/v1/house")
 @RequiredArgsConstructor
 public class HouseController {
 
