@@ -15,14 +15,9 @@ public class GuestController {
 
     private final GuestService guestService;
 
-    @PostMapping("/check")
-    public ResponseEntity<GuestCheckResponseDto> checkUserId(
-            @RequestBody GuestCheckRequestDto dto
-    ) {
-        GuestCheckResponseDto response = guestService.checkUserId(dto);
-        return ResponseEntity.ok(response);
-    }
-
+    /*
+    Signup
+    */
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(
             @RequestBody GuestSignupRequestDto dto
@@ -35,4 +30,62 @@ public class GuestController {
 
         return ResponseEntity.badRequest().body("signup fail");
     }
+
+    /*
+    Signin
+    */
+    @PostMapping("/signin")
+    public ResponseEntity<Map<String, String>> signin(
+    		@RequestBody GuestSigninRequestDto dto,
+            HttpServletRequest request) {
+    	
+    	// 1. 비즈니스 로직 수행 (ID/PW 검증 및 엔티티 조회)
+        Guest host = guestService.signIn(dto);
+        
+        // 2. 세션용 DTO 생성 (메모리 절약 및 보안을 위해 필요한 정보만 추출)
+        SessionUser sessionUser = SessionUser.builder()
+                .id(host.getHostId())
+                .name(host.getName())
+                .role("ROLE_HOST") // 시큐리티 인가용 권한 (Spring 자체에서 hasRole("HOST") 호출 시 ROLE_ 접두사를 붙여서 확인하게 됨)
+                .build();
+        
+        // 3. 시큐리티 토큰의 principal 자리에 이 DTO를 전달
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+        				sessionUser, 				// 1. Principal (주체), 로그인한 유저가 누구인가? sessionUser를 넣었으므로 hostId, hostName,hostRole 등을 꺼내 쓸 수 있음
+                		null, 						// 2. Credentials (자격 증명), "비밀번호" 같은 증거물, 그러나 로그인이 이미 완료된 시점에는 비밀번호를 메모리에 들고 있을 필요가 없으므로 보안상 null을 넣어 비워두는 것이 관례
+                        List.of(new SimpleGrantedAuthority(sessionUser.getRole())));
+        
+        // 4. 현재 쓰레드의 보안 컨텍스트에 인증 정보 설정
+        // 이를 통해 해당 요청 내의 Service/Controller에서 즉시 인증 정보를 사용 가능하게 함
+        SecurityContextHolder.	// 1. 시큐리티 저장소 관리자에게 가서
+        	getContext().		// 2. 현재 내 요청 전용 보관함 (authenticationToken + 그 외 정보(접속한 사용자의 IP 주소 + JSESSIONID)를 담음)을 꺼내서 
+        	setAuthentication(authenticationToken);	// 3. 그 안에 신분증을 넣음
+        
+        // 4. WAS 세션 생성 및 시큐리티 컨텍스트 보관
+        HttpSession session = request.getSession();
+        // request.getSession()은 요청 쿠키에서 JSESSIONID을 읽고, 일치하는 세션이 있다면 WAS 메모리 세션 스코프에 일치하는 세션 객체를 읽어옴. 
+        
+        // session 객체 자체가 일종의 map, key - value 값을 저장
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,  // 실제값 : "SPRING_SECURITY_CONTEXT" 라는 key에 대해
+                             SecurityContextHolder.getContext());	
+        
+        // 5. 응답 구성
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "로그인에 성공하였습니다.");
+        response.put("hostName", host.getName());
+        
+        return ResponseEntity.ok(response);
+    }
+
+    /*
+    Check
+    */
+    @PostMapping("/check")
+    public ResponseEntity<GuestCheckResponseDto> checkUserId(
+            @RequestBody GuestCheckRequestDto dto
+    ) {
+        GuestCheckResponseDto response = guestService.checkUserId(dto);
+        return ResponseEntity.ok(response);
+    }
+
 }
