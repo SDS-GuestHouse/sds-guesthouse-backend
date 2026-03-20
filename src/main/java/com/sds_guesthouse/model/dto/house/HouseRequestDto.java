@@ -1,6 +1,7 @@
 package com.sds_guesthouse.model.dto.house;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,10 +23,11 @@ public class HouseRequestDto {
     private String address;
 
     @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
-    private int price;
+    private Integer price;
 
     private String description;
     
+    @NotNull(message = "인원수는 필수 항목입니다.")
     @Min(value = 1, message = "최대 인원은 1명 이상이어야 합니다.")
-    private int maxGuests;
+    private Integer maxGuests;
 }
