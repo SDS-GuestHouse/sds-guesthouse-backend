@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sds_guesthouse.model.dao.HouseMapper">
+
+    <insert id="insertHouse" parameterType="com.sds_guesthouse.model.entity.House">
+        INSERT INTO houses (
+            host_id,
+            name,
+            address,
+            price,
+            max_guests,
+            description,
+            status,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{hostId},
+            #{name},
+            #{address},
+            #{price},
+            #{maxGuests},
+            #{description},
+            #{status},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+</mapper>
