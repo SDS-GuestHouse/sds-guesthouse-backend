@@ -34,11 +34,11 @@ public class SecurityConfig {
             //     .anyRequest().authenticated()
             // )
             
-//            .authorizeHttpRequests(auth -> auth
-//                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용 (로그인 상태 아니어도 인증되도록)
-//                // 추후 회원가입, 로그인 등만 permitAll()로 처리해줘야함
-//                // 나머지는 **authenticated()**로 설정해서 로그인한 사람만 쓰게 바꿉니다.
-//            );
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용 (로그인 상태 아니어도 인증되도록)
+                // 추후 회원가입, 로그인 등만 permitAll()로 처리해줘야함
+                // 나머지는 **authenticated()**로 설정해서 로그인한 사람만 쓰게 바꿉니다.
+            )
             
          // 3. 세션 관리 전략
             .sessionManagement(session -> session
