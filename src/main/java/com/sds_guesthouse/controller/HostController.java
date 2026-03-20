@@ -1,5 +1,8 @@
 package com.sds_guesthouse.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +28,14 @@ public class HostController {
      * POST /api/v1/host/signup
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody HostSignupRequestDto dto) {
+    public ResponseEntity<Map<String, String>> signup(@Valid @RequestBody HostSignupRequestDto dto) {
         // 1. 유효성 검사(@Valid) 통과 후 서비스 호출
-//        hostService.registerHost(dto);
+        hostService.registerHost(dto);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "회원가입이 성공적으로 완료되었습니다.");
         
         // 2. 성공 응답 반환
-        return ResponseEntity.status(HttpStatusCode.valueOf(200))
-                .body("회원가입이 성공적으로 완료되었습니다.");
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(response);
     }
 }
