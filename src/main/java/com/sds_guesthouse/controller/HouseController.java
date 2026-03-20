@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.sds_guesthouse.model.dto.HouseRequestDto;
 import com.sds_guesthouse.model.service.HouseService;
+import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 
 import jakarta.validation.Valid;

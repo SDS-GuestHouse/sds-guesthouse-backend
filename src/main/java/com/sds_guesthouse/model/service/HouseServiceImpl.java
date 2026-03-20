@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
-import com.sds_guesthouse.model.dto.HouseRequestDto;
+import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 

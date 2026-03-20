@@ -1,6 +1,6 @@
 package com.sds_guesthouse.model.service;
 
-import com.sds_guesthouse.model.dto.HouseRequestDto;
+import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 
 public interface HouseService {
