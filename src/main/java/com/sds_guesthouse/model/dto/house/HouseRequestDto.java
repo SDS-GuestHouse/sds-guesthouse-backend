@@ -1,4 +1,4 @@
-package com.sds_guesthouse.model.dto;
+package com.sds_guesthouse.model.dto.house;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @ToString
-public class HouseCreateRequestDto {
+public class HouseRequestDto {
 
     @NotBlank(message = "숙소 이름은 필수입니다.")
     private String name;
