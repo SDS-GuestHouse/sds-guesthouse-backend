@@ -1,4 +1,4 @@
-package com.sds_guesthouse.model.dto;
+package com.sds_guesthouse.model.dto.host;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
