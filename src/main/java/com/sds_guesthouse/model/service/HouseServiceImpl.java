@@ -31,7 +31,7 @@ public class HouseServiceImpl implements HouseService {
                 .price(dto.getPrice())
                 .maxGuests(dto.getMaxGuests())
                 .description(dto.getDescription())
-                .status(HouseStatus.PENDING) // 관리자 승인 대기
+                .status(HouseStatus.CREATE_PENDING) // 관리자 승인 대기
                 .build();
 
         int result = houseMapper.insertHouse(house);

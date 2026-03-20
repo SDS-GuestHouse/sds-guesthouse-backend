@@ -1,7 +1,8 @@
 package com.sds_guesthouse.model.entity;
 
 public enum HouseStatus {
-    PENDING,
+    CREATE_PENDING,
+    DELETE_PENDING,
     APPROVED,
     REJECTED,
     DELETED
