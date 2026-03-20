@@ -7,6 +7,6 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GuestSignInResponseDto {
-    private String sessionId;
+public class GuestCheckRequestDto {
+    private String userId;
 }

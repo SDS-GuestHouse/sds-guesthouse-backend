@@ -4,7 +4,6 @@ import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dto.HostSignupRequestDto;
 import com.sds_guesthouse.model.entity.Host;
 import com.sds_guesthouse.model.mapper.HostMapper;
-import com.sds_guesthouse.util.OpenCrypt;
 
 import lombok.RequiredArgsConstructor;
 
