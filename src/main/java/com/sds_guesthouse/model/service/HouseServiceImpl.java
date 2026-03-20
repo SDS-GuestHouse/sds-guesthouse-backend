@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
+import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.HouseCreateRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
-import com.sds_guesthouse.model.mapper.HouseMapper;
 
 import lombok.RequiredArgsConstructor;
 

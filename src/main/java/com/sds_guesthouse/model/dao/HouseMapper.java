@@ -1,4 +1,4 @@
-package com.sds_guesthouse.model.mapper;
+package com.sds_guesthouse.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
