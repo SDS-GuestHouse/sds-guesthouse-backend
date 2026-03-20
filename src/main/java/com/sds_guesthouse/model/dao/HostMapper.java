@@ -1,4 +1,4 @@
-package com.sds_guesthouse.model.mapper;
+package com.sds_guesthouse.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,4 +20,11 @@ public interface HostMapper {
      * @return 영향받은 행의 수 (성공 시 1)
      */
     int insertHost(Host host);
+    
+    /**
+     * 아이디로 호스트 정보 조회 (로그인용)
+     * @param userId 조회할 아이디
+     * @return 조회된 호스트 엔티티
+     */
+    Host findByUserId(String userId);
 }

@@ -17,7 +17,7 @@ public class Host {
 
     private Long hostId;        // PK (자동 증가분)
     private String userId;      // 호스트 아이디
-    private String password;    // 암호화된 비밀번호 (SHA-256)
+    private String password;    // 암호화된 비밀번호 (Bcrypt)
     private String name;        // 호스트 이름
     private String phone;       // 연락처
     private LocalDateTime createdAt; // 가입 일시
