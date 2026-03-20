@@ -14,4 +14,5 @@ public interface HouseMapper {
      */
     int insertHouse(House house);
     House findById(Long houseId);
+    int updateHouse(House house);
 }
