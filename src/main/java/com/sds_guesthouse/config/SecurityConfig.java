@@ -19,7 +19,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 테스트를 위해 CSRF 보호 잠시 해제 (CSRF 토큰 없이도 없이도 요청 가능하도록)
+        	// 1. CSRF 보안 비활성화 (테스트 편의를 위해, 실무에선 설정 필요)
+        	.csrf(csrf -> csrf.disable())
+        	
+        	// // 2. URL별 권한 제어 (가장 중요한 부분!)
+            // .authorizeHttpRequests(auth -> auth
+            //     // 호스트 전용 API는 ROLE_HOST 권한이 있어야만 접근 가능
+            //     .requestMatchers("/api/v1/host/**").hasRole("HOST")
+            //     // 로그인, 회원가입 등 공통 API는 누구나 접근 가능
+            //     .requestMatchers("/api/v1/auth/**", "/signin", "/signup").permitAll()
+            //     // 그 외 모든 요청은 인증(로그인)이 필요함
+            //     .anyRequest().authenticated()
+            // )
+            
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll() // 모든 요청을 인증 없이 허용 (로그인 상태 아니어도 인증되도록)
                 // 추후 회원가입, 로그인 등만 permitAll()로 처리해줘야함
