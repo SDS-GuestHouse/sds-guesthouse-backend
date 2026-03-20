@@ -13,7 +13,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "password") // 로그 찍을 때 비밀번호는 가려주는 센스!
+@ToString(exclude = "password") // 로그 찍을 때 비밀번호는 가려주기
 public class HostSignupRequestDto {
 	
 	@NotBlank(message = "아이디는 필수 입력 값입니다.")
