@@ -2,30 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sds_guesthouse.model.mapper.HostMapper">
+<mapper namespace="com.sds_guesthouse.model.dao.HostMapper">
 
     <select id="existsByUserId" parameterType="string" resultType="boolean">
-        SELECT COUNT(*)
-        FROM hosts
-        WHERE user_id = #{userId}
+        SELECT COUNT(*) FROM hosts WHERE user_id = #{userId}
     </select>
 
     <insert id="insertHost" parameterType="com.sds_guesthouse.model.entity.Host">
-        INSERT INTO hosts (
-            user_id, 
-            name, 
-            password,
-            phone, 
-            created_at, 
-            updated_at
-        ) VALUES (
-            #{userId}, 
-            #{name}, 
-            #{password}, 
-            #{phone}, 
-            NOW(), 
-            NOW()
-        )
+        INSERT INTO hosts (user_id, name, password, phone, created_at, updated_at)
+        VALUES (#{userId}, #{name}, #{password}, #{phone}, NOW(), NOW())
     </insert>
+
+    <select id="findByUserId" parameterType="string" resultType="com.sds_guesthouse.model.entity.Host">
+        SELECT host_id, user_id, password, name, phone, created_at, updated_at
+        FROM hosts
+        WHERE user_id = #{userId}
+    </select>
 
 </mapper>
