@@ -13,4 +13,5 @@ public interface HouseMapper {
      * @return 영향받은 행 수
      */
     int insertHouse(House house);
+    House findById(Long houseId);
 }

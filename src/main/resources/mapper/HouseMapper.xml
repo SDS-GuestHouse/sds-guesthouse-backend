@@ -27,5 +27,21 @@
             NOW()
         )
     </insert>
+    
+	<select id="findById" resultType="com.sds_guesthouse.model.entity.House">
+	    SELECT
+	        house_id,
+	        host_id,
+	        name,
+	        address,
+	        price,
+	        max_guests,
+	        description,
+	        status,
+	        created_at,
+	        updated_at
+	    FROM houses
+	    WHERE house_id = #{houseId}
+	</select>    
 
 </mapper>

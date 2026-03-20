@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sds_guesthouse.model.dto.HouseCreateRequestDto;
 import com.sds_guesthouse.model.service.HouseService;
+import com.sds_guesthouse.model.entity.House;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,13 @@ public class HouseController {
         response.put("message", "숙소 등록 요청이 완료되었습니다.");
 
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{houseId}")
+    public ResponseEntity<House> getHouseDetail(@PathVariable Long houseId) {
+
+        House house = houseService.getHouseDetail(houseId);
+
+        return ResponseEntity.ok(house);
     }
 }

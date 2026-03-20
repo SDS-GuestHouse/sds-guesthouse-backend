@@ -47,4 +47,16 @@ public class HouseServiceImpl implements HouseService {
     private Long getCurrentHostId() {
         return 1L;
     }
+    
+    @Override
+	public House getHouseDetail(Long houseId) {
+	
+	    House house = houseMapper.findById(houseId);
+	
+	    if (house == null) {
+	        throw new IllegalArgumentException("해당 숙소가 존재하지 않습니다.");
+	    }
+	
+	    return house;
+	}
 }
