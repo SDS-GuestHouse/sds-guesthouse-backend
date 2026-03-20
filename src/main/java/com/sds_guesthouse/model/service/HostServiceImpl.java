@@ -7,6 +7,8 @@ import com.sds_guesthouse.model.mapper.HostMapper;
 import com.sds_guesthouse.util.OpenCrypt;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class HostServiceImpl implements HostService {
 
     private final HostMapper hostMapper;
+    private final PasswordEncoder passwordEncoder; // 빈으로 등록한 BCrypt 주입
 
     @Override
     @Transactional
@@ -25,16 +28,20 @@ public class HostServiceImpl implements HostService {
         if (hostMapper.existsByUserId(dto.getUserId())) {
             throw new IllegalArgumentException("Duplicate ID: " + dto.getUserId());
         }
-
-        // 2. 비밀번호 암호화 (SHA-256 + Salt)
+        
+        // 2. BCrypt 암호화 (Salt를 따로 넣지 않아도 내부에서 무작위로 생성함)
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        
+        // 이전버전 : OpenCrypt 실습 파일 비밀번호 암호화 (SHA-256 + Salt)
+        // userId를 이용해 salt를 만드는 방식은 userId가 탈취당하면 소용 없음..?
         // Salt는 보통 유저의 ID나 생성일자 등을 섞어서 암호문의 예측을 어렵게 만듭니다.
-        byte[] encryptedPassword = OpenCrypt.getSHA256(dto.getPassword(), dto.getUserId());
-        String hexPassword = OpenCrypt.byteArrayToHex(encryptedPassword);
+        // byte[] encryptedPassword = OpenCrypt.getSHA256(dto.getPassword(), dto.getUserId());
+        // String hexPassword = OpenCrypt.byteArrayToHex(encryptedPassword);
         
         // 3. DTO -> Entity 변환 (빌더 패턴 활용)
         Host host = Host.builder()
                 .userId(dto.getUserId())
-                .password(hexPassword) // 암호화된 비번 주입
+                .password(encodedPassword) // 암호화된 비번 주입
                 .name(dto.getName())
                 .phone(dto.getPhone())
                 .build();
