@@ -8,7 +8,9 @@ import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
+import com.sds_guesthouse.model.entity.Reservation;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -99,5 +101,11 @@ public class HouseServiceImpl implements HouseService {
         if (result == 0) {
             throw new ExplicitMessageException("숙소 삭제 요청에 실패했습니다.");
         }
+    }
+    
+    @Override
+    public List<Reservation> getReservationsByHouseId(Long houseId) {
+        // 주어진 houseId에 해당하는 예약 정보 목록 조회
+        return houseMapper.findReservationsByHouseId(houseId);
     }
 }

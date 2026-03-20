@@ -2,13 +2,16 @@ package com.sds_guesthouse.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.sds_guesthouse.model.service.HouseService;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
+import com.sds_guesthouse.model.entity.Reservation;
 import com.sds_guesthouse.model.entity.House;
+
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +68,12 @@ public class HouseController {
         response.put("message", "숙소 삭제 요청이 완료되었습니다. 관리자 승인 대기 중입니다.");
 
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{houseId}/reservation")
+    public ResponseEntity<List<Reservation>> getReservationsByHouseId(@PathVariable Long houseId) {
+        List<Reservation> reservations = houseService.getReservationsByHouseId(houseId);
+        
+        return ResponseEntity.ok(reservations);
     }
 }

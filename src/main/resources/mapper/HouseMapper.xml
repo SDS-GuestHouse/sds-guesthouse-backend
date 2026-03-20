@@ -56,5 +56,20 @@
 	        updated_at = NOW()
 	    WHERE house_id = #{houseId}
 	</update>
+	
+    <select id="findReservationsByHouseId" resultType="com.sds_guesthouse.model.entity.Reservation">
+        SELECT
+            reservation_id AS reservationId,
+            guest_id AS guestId,
+            house_id AS houseId,
+            status,
+            checkin_date AS checkinDate,
+            checkout_date AS checkoutDate,
+            total_price AS totalPrice,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM reservations
+        WHERE house_id = #{houseId}
+    </select>
 
 </mapper>
