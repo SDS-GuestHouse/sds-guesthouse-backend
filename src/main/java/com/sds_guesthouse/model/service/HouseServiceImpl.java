@@ -59,4 +59,26 @@ public class HouseServiceImpl implements HouseService {
 	
 	    return house;
 	}
+    
+    @Override
+    @Transactional
+    public void updateHouse(Long houseId, HouseRequestDto dto) {
+        // 1. 기존 숙소 정보 조회
+        House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new IllegalArgumentException("해당 숙소가 존재하지 않습니다.");
+        }
+        // 2. 수정된 데이터 반영
+        house.setName(dto.getName());
+        house.setAddress(dto.getAddress());
+        house.setPrice(dto.getPrice());
+        house.setMaxGuests(dto.getMaxGuests());
+        house.setDescription(dto.getDescription());
+     
+        // 3. DB에 업데이트
+        int result = houseMapper.updateHouse(house);
+        if (result == 0) {
+            throw new ExplicitMessageException("숙소 정보 수정에 실패했습니다.");
+        }
+    }
 }
