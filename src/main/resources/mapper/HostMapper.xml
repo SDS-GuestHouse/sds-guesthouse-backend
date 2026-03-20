@@ -6,15 +6,15 @@
 
     <select id="existsByUserId" parameterType="string" resultType="boolean">
         SELECT COUNT(*)
-        FROM host
+        FROM hosts
         WHERE user_id = #{userId}
     </select>
 
     <insert id="insertHost" parameterType="com.sds_guesthouse.model.entity.Host">
-        INSERT INTO host (
+        INSERT INTO hosts (
             user_id, 
             name, 
-            password, 
+            password,
             phone, 
             created_at, 
             updated_at
