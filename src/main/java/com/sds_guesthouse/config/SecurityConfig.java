@@ -24,7 +24,7 @@ public class SecurityConfig {
         	// 1. CSRF 보안 비활성화 (테스트 편의를 위해, 실무에선 설정 필요)
         	.csrf(csrf -> csrf.disable())
         	
-        	// // 2. URL별 권한 제어 (가장 중요한 부분!)
+        	// 2. URL별 권한 제어
             // .authorizeHttpRequests(auth -> auth
             //     // 호스트 전용 API는 ROLE_HOST 권한이 있어야만 접근 가능
             //     .requestMatchers("/api/v1/host/**").hasRole("HOST")
@@ -36,14 +36,11 @@ public class SecurityConfig {
             
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll() // 모든 요청을 인증 없이 허용 (로그인 상태 아니어도 인증되도록)
-                // 추후 회원가입, 로그인 등만 permitAll()로 처리해줘야함
-                // 나머지는 **authenticated()**로 설정해서 로그인한 사람만 쓰게 바꿉니다.
             )
             
          // 3. 세션 관리 전략
             .sessionManagement(session -> session
-                // 세션이 없으면 새로 생성하고, 있으면 기존 것 사용 (IF_REQUIRED)
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션이 없으면 새로 생성하고, 있으면 기존 것 사용 (IF_REQUIRED)
             );
         return http.build();
 
