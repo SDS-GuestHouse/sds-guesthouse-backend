@@ -3,27 +3,34 @@ package com.sds_guesthouse.util.auth;
 import com.sds_guesthouse.model.entity.Guest;
 import com.sds_guesthouse.model.entity.Host;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 public class SessionUser {
-    private Long userPk;
-    private String userId;
-    private String userType; // GUEST, HOST, ADMIN
+    private Long id;
     private String name;
+    private String role; // ROLE_GUEST, ROLE_HOST
 
     public static SessionUser fromGuest(Guest guest) {
-        SessionUser user = new SessionUser();
-        user.userPk = guest.getGuestId();
-        user.userId = guest.getUserId();
-        user.userType = "GUEST";
-        user.name = guest.getName();
-        return user;
+        return SessionUser.builder()
+                .id(guest.getGuestId())
+                .name(guest.getName())
+                .role("ROLE_GUEST")
+                .build();
     }
 
     public static SessionUser fromHost(Host host) {
-        SessionUser user = new SessionUser();
-        user.userPk = host.getHostId();
-        user.userId = host.getUserId();
-        user.userType = "HOST";
-        user.name = host.getName();
-        return user;
+        return SessionUser.builder()
+                .id(host.getHostId())
+                .name(host.getName())
+                .role("ROLE_HOST")
+                .build();
     }
 }
