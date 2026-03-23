@@ -8,7 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,8 +80,21 @@ public class AdminController {
         
         // 서비스에서 해당 status를 가진 숙소 리스트를 가져옴
         List<House> houses = adminService.getHousesByStatus(dto.getStatus());
-        
         return ResponseEntity.ok(houses);
+    }
+    
+    /**
+     * 특정 숙소의 상태 변경 (승인/거절 등)
+     * PUT /api/v1/admin/houses/{id}
+     */
+    @PutMapping("/houses/{id}")
+    public ResponseEntity<Void> updateHouseStatus(
+            @PathVariable("id") long houseId,
+            @Valid @RequestBody AdminHouseManageRequestDto dto) {
+        
+        adminService.updateHouseStatus(houseId, dto.getStatus());
+        
+        return ResponseEntity.ok().build();
     }
 
 }

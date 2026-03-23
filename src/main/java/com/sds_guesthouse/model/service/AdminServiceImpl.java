@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.model.dao.AdminMapper;
@@ -39,7 +40,27 @@ public class AdminServiceImpl implements AdminService {
     public List<House> getHousesByStatus(HouseStatus status) {
         return houseMapper.findByStatus(status);
     }
-	
+
+	@Override
+	@Transactional
+	public void updateHouseStatus(long houseId, HouseStatus status) {
+		
+		// 해당 숙소가 존재하는지 확인, 존재하지 않는다면 400 에러
+		House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new BusinessException("존재하지 않는 숙소 정보입니다.");
+        }
+
+        // 상태 업데이트 실행, 매퍼에 id와 변경할 status를 전달합니다.
+        int result = houseMapper.updateStatus(houseId, status);
+        
+        // 만약 업데이트된 행이 0개라면
+        if (result == 0) {
+            throw new BusinessException("숙소 상태 변경에 실패했습니다.");
+        }
+		
+	}
+
 	
 
 }

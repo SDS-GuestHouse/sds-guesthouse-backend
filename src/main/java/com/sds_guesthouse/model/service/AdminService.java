@@ -25,4 +25,6 @@ public interface AdminService {
      */
 	List<House> getHousesByStatus(HouseStatus status);
 
+	void updateHouseStatus(long houseId, HouseStatus status);
+
 }
