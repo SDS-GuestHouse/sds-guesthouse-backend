@@ -28,4 +28,11 @@ public class ReservationController {
 
         return ResponseEntity.ok(reservations);
     }
+    
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<Reservation> getReservationByReservationId(@PathVariable Long reservationId) {
+        Reservation reservation = reservationService.getReservationByReservationId(reservationId);
+        
+        return ResponseEntity.ok(reservation);
+    }
 }

@@ -23,4 +23,19 @@
 	        AND #{date} BETWEEN checkin_date AND checkout_date
 	    </if>
     </select>
+    
+    <select id="findReservationByReservationId" resultType="com.sds_guesthouse.model.entity.Reservation">
+        SELECT
+            reservation_id AS reservationId,
+            guest_id AS guestId,
+            house_id AS houseId,
+            status,
+            checkin_date AS checkinDate,
+            checkout_date AS checkoutDate,
+            total_price AS totalPrice,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM reservations
+        WHERE reservation_id = #{reservationId}
+    </select>
 </mapper>

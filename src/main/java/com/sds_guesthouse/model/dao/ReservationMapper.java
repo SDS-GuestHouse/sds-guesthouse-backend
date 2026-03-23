@@ -15,4 +15,6 @@ public interface ReservationMapper {
 	    @Param("status") ReservationStatus status,
 	    @Param("date") String date
 	);
+	
+	Reservation findReservationByReservationId(Long reservationId);
 }

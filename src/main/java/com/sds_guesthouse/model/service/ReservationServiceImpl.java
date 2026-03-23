@@ -17,7 +17,12 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<Reservation> getReservations(ReservationStatus status, String date) {
-
         return reservationMapper.findReservations(status, date);
     }
+
+    @Override
+    public Reservation getReservationByReservationId(Long reservationId) {
+    	return reservationMapper.findReservationByReservationId(reservationId);
+    }
+
 }
