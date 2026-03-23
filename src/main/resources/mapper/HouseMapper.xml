@@ -88,5 +88,12 @@
         WHERE status = #{status}
         ORDER BY created_at DESC
     </select>
+    
+    <update id="updateStatus">
+        UPDATE houses
+        SET 
+            status = #{status},
+            updated_at = NOW()  WHERE house_id = #{houseId}
+    </update>
 
 </mapper>

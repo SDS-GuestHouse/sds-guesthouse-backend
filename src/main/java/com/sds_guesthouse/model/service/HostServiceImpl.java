@@ -58,10 +58,7 @@ public class HostServiceImpl implements HostService {
     }
     
     @Override
-    public boolean isDuplicateId(String userId) {
-        if (hostMapper.existsByUserId(userId)) {
-        	return true;
-        }
-        return false;
+    public HostIdDuplicateCheckResponseDto isDuplicateId(String userId) {
+    		return HostIdDuplicateCheckResponseDto.builder().available(!hostMapper.existsByUserId(userId)).build();
     }
 }
