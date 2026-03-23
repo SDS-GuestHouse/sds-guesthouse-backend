@@ -16,11 +16,18 @@
         VALUES (#{userId}, #{password}, #{name}, #{phone})
     </insert>
 
-    <select id="countByUserIdAndPassword" resultType="int">
-        SELECT COUNT(*)
+    <select id="getGuestByUserId"
+            resultType="com.sds_guesthouse.model.entity.Guest">
+        SELECT
+            guest_id   AS guestId,
+            user_id    AS userId,
+            password,
+            name,
+            phone,
+            created_at AS createdAt,
+            updated_at AS updatedAt
         FROM guests
         WHERE user_id = #{userId}
-          AND password = #{password}
     </select>
 
 </mapper>

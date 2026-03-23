@@ -8,11 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.model.dao.AdminMapper;
-import com.sds_guesthouse.model.dao.HostMapper;
 import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.entity.Admin;
-import com.sds_guesthouse.model.entity.Host;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 
