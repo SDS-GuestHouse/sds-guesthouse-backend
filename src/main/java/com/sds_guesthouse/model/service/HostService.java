@@ -11,6 +11,7 @@ public interface HostService {
     /**
      * 호스트 회원가입 로직
      * @param dto 가입 신청 정보
+     * @return 
      * @throws IllegalArgumentException 보안상 상세 사유를 숨겨야 할 때 -> "입력 정보가 올바르지 않거나 처리할 수 없는 요청입니다."
      */
     void registerHost(HostSignupRequestDto dto);
