@@ -1,23 +1,22 @@
 package com.sds_guesthouse.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.sds_guesthouse.model.dto.guest.GuestCheckRequestDto;
 import com.sds_guesthouse.model.dto.guest.GuestCheckResponseDto;
 import com.sds_guesthouse.model.dto.guest.GuestSigninRequestDto;
-import com.sds_guesthouse.model.dto.guest.GuestSigninResponseDto;
 import com.sds_guesthouse.model.dto.guest.GuestSignupRequestDto;
 import com.sds_guesthouse.model.service.GuestService;
-import lombok.RequiredArgsConstructor;
-
-import com.sds_guesthouse.util.auth.SessionUser;
-import com.sds_guesthouse.util.auth.SessionConst;
 import com.sds_guesthouse.util.auth.SecurityLoginService;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.sds_guesthouse.util.auth.SessionUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
