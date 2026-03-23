@@ -88,5 +88,35 @@
         WHERE status = #{status}
         ORDER BY created_at DESC
     </select>
+    
+	<select id="findAvailableHouses" resultType="com.sds_guesthouse.model.entity.House">
+	    SELECT
+	    	h.house_id AS houseId,
+            host_id AS hostId,
+            name,
+            address,
+            price,
+            max_guests AS maxGuests,
+            description,
+            h.status AS status,
+            h.created_at AS createdAt,
+            h.updated_at AS updatedAt
+	    FROM houses h
+	    LEFT JOIN reservations r
+	        ON h.house_id = r.house_id
+	        AND (
+        	    <![CDATA[
+	            (r.checkin_date < #{endDate} AND r.checkout_date > #{startDate})
+	            OR r.status = 'CANCELLED'
+	            ]]>
+	        )
+	    WHERE h.max_guests >= #{numberOfGuests}
+	    AND (r.reservation_id IS NULL OR r.status = 'CANCELLED')
+	    AND h.status = 'APPROVED'
+	    <if test="location != null and location != ''">
+	        AND h.address LIKE CONCAT('%', #{location}, '%')
+	    </if>
+	   	
+	</select>
 
 </mapper>
