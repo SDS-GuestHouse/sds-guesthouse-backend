@@ -1,8 +1,6 @@
 package com.sds_guesthouse.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sds_guesthouse.model.dto.host.HostIdDuplicateCheckRequestDto;
+import com.sds_guesthouse.model.dto.host.HostIdDuplicateCheckResponseDto;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.dto.host.HostSignupRequestDto;
 import com.sds_guesthouse.model.entity.Host;
@@ -37,29 +36,32 @@ public class HostController {
      * 호스트 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> signup(@Valid @RequestBody HostSignupRequestDto dto) { // @Valid : dto의 유효성 검사 수행
+    public ResponseEntity<Void> signup(@Valid @RequestBody HostSignupRequestDto dto) { // @Valid : dto의 유효성 검사 수행
         hostService.registerHost(dto);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "회원가입이 성공적으로 완료되었습니다.");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
     
     /**
      * 호스트 회원가입시 아이디 중복 체크
      */
     @PostMapping("/check")
-    public ResponseEntity<Map<String, String>> checkDuplicateId(@RequestBody HostIdDuplicateCheckRequestDto dto) {
-        hostService.isDuplicateId(dto.getUserId());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "사용 가능한 아이디입니다.");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<HostIdDuplicateCheckResponseDto> checkDuplicateId(@RequestBody HostIdDuplicateCheckRequestDto request) {
+    	
+    	if (hostService.isDuplicateId(request.getUserId())) {
+        	return ResponseEntity.ok(HostIdDuplicateCheckResponseDto.builder()
+        			.available(true)
+        			.build());
+        }
+    	return ResponseEntity.ok(HostIdDuplicateCheckResponseDto.builder()
+    			.available(false)
+    			.build());
     }
     
     /**
      * 호스트 로그인
      */
     @PostMapping("/signin")
-    public ResponseEntity<Map<String, String>> signin(
+    public ResponseEntity<Void> signin(
     		@RequestBody HostSigninRequestDto dto,
             HttpServletRequest request) { // JSESSIONID 읽기 위해 HttpServletRequest request 파라미터에 추가
         Host host = hostService.login(dto);
@@ -87,13 +89,8 @@ public class HostController {
         // session 객체 자체가 일종의 map, key - value 값을 저장
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,  // 실제값 : "SPRING_SECURITY_CONTEXT" 라는 key에 대해
                              SecurityContextHolder.getContext());// authenticationToken을 + 그 외 정보를 감싼 context를 넣어줌 (로그인 요청 응답 이후의 다른 요청들에서도 사용할 수 있도록)   
-
-        // 응답 구성
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "로그인에 성공하였습니다.");
-        response.put("hostName", host.getName());
         
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
     
 
