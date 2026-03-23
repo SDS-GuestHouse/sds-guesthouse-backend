@@ -84,7 +84,7 @@
             status,
             created_at AS createdAt,
             updated_at AS updatedAt
-        FROM house
+        FROM houses
         WHERE status = #{status}
         ORDER BY created_at DESC
     </select>

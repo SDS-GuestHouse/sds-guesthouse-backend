@@ -22,6 +22,7 @@ import com.sds_guesthouse.security.SessionUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -71,9 +72,9 @@ public class AdminController {
     /**
      * 상태별 숙소 관리 목록 조회 (승인 대기, 삭제 대기 등)
      */
-    @GetMapping("/manage")
+    @PostMapping("/manage")
     public ResponseEntity<List<House>> getPendingHouses(
-            @RequestBody AdminHouseManageRequestDto dto) {
+            @Valid @RequestBody AdminHouseManageRequestDto dto) {
         
         // 서비스에서 해당 status를 가진 숙소 리스트를 가져옴
         List<House> houses = adminService.getHousesByStatus(dto.getStatus());
