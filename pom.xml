@@ -41,14 +41,12 @@
 		</dependency>
 		
 		<!-- 코드 변경시 서버 자동 재시작을 위한 의존성, 서버에러 발생시 trace 노출되지 않도록 하기 위해선 주석 처리 필요 -->
-		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		-->
 		
 		<dependency>
 			<groupId>com.mysql</groupId>
