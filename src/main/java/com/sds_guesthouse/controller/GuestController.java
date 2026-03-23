@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 
 import com.sds_guesthouse.util.auth.SessionUser;
 import com.sds_guesthouse.util.auth.SessionConst;
+import com.sds_guesthouse.util.auth.SecurityLoginService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -24,6 +26,7 @@ import jakarta.servlet.http.HttpSession;
 public class GuestController {
 
     private final GuestService guestService;
+    private final SecurityLoginService securityLoginService;
 
     /*
     Signup
@@ -41,21 +44,14 @@ public class GuestController {
     */
     @PostMapping("/signin")
     public ResponseEntity<Void> signIn(
-        @RequestBody GuestSigninRequestDto dto,
-        HttpServletRequest request
-    ){
+            @RequestBody GuestSigninRequestDto dto,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         SessionUser sessionUser = guestService.signInGuest(dto);
-    
-        if(sessionUser == null){
-            return ResponseEntity.badRequest().build();
-        }
-
-        HttpSession session = request.getSession(true);
-        session.setAttribute(SessionConst.LOGIN_USER, sessionUser);
-
+        securityLoginService.login(sessionUser, request, response);
         return ResponseEntity.ok().build();
     }
-
 
     /*
     Check
