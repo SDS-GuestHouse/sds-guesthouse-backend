@@ -39,6 +39,7 @@ public class GuestController {
     /*
     Signin
     */
+    @PostMapping("/signin")
     public ResponseEntity<Void> signIn(
         @RequestBody GuestSigninRequestDto dto,
         HttpServletRequest request
