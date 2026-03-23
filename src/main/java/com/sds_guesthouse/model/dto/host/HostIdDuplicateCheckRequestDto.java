@@ -1,5 +1,7 @@
 package com.sds_guesthouse.model.dto.host;
 
+import com.sds_guesthouse.util.validation.ValidUserId;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HostIdDuplicateCheckRequestDto {
+	@ValidUserId
     private String userId;
 }
