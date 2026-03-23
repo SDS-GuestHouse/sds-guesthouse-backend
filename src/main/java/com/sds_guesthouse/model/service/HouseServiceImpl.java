@@ -10,6 +10,7 @@ import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 import com.sds_guesthouse.model.entity.Reservation;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -108,4 +109,12 @@ public class HouseServiceImpl implements HouseService {
         // 주어진 houseId에 해당하는 예약 정보 목록 조회
         return houseMapper.findReservationsByHouseId(houseId);
     }
+    
+    @Override
+    public List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, int numberOfGuests) {
+    	List<House> availableHouses = houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
+    	
+    	return availableHouses;
+    };
+
 }
