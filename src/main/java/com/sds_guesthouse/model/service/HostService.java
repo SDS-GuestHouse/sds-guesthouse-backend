@@ -1,5 +1,6 @@
 package com.sds_guesthouse.model.service;
 
+import com.sds_guesthouse.model.dto.host.HostIdDuplicateCheckResponseDto;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.dto.host.HostSignupRequestDto;
 import com.sds_guesthouse.model.entity.Host;
@@ -22,7 +23,7 @@ public interface HostService {
      * @return 아이디 중복 체크 여부
      * @throws ExplicitMessageException  사용자에게 상세 사유를 전달해야 할 때 -> "이미 사용 중인 아이디입니다."
      */
-	boolean isDuplicateId(String userId);
+	HostIdDuplicateCheckResponseDto isDuplicateId(String userId);
     
     /**
      * 호스트 로그인 로직

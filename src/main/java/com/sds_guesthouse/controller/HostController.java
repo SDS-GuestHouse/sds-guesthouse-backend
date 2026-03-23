@@ -47,14 +47,7 @@ public class HostController {
     @PostMapping("/check")
     public ResponseEntity<HostIdDuplicateCheckResponseDto> checkDuplicateId(@RequestBody HostIdDuplicateCheckRequestDto request) {
     	
-    	if (hostService.isDuplicateId(request.getUserId())) {
-        	return ResponseEntity.ok(HostIdDuplicateCheckResponseDto.builder()
-        			.available(true)
-        			.build());
-        }
-    	return ResponseEntity.ok(HostIdDuplicateCheckResponseDto.builder()
-    			.available(false)
-    			.build());
+    	return ResponseEntity.ok(hostService.isDuplicateId(request.getUserId()));
     }
     
     /**
