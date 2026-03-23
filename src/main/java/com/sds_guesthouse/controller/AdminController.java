@@ -9,14 +9,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sds_guesthouse.model.dto.admin.AdminHouseManageRequestDto;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.entity.Admin;
 import com.sds_guesthouse.model.entity.Host;
+import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.service.AdminService;
 import com.sds_guesthouse.model.service.HostService;
 import com.sds_guesthouse.security.SessionUser;
@@ -36,10 +39,14 @@ public class AdminController {
      * admin 로그인
      */
     @PostMapping("/signin")
-    public ResponseEntity<Map<String, String>> signin(
+    public ResponseEntity<Void> signin(
     		@RequestBody HostSigninRequestDto dto,
             HttpServletRequest request) {
         Admin admin = adminService.login(dto);
+        
+        if (admin == null) {
+        	ResponseEntity.badRequest().build();
+        }
         
         SessionUser sessionUser = SessionUser.builder()
                 .id(admin.getAdminId())
@@ -61,12 +68,21 @@ public class AdminController {
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,  // 실제값 : "SPRING_SECURITY_CONTEXT" 라는 key에 대해
                              SecurityContextHolder.getContext());// authenticationToken을 + 그 외 정보를 감싼 context를 넣어줌 (로그인 요청 응답 이후의 다른 요청들에서도 사용할 수 있도록)   
 
-        // 응답 구성
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "로그인에 성공하였습니다.");
-        response.put("hostName", admin.getName());
         
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
+    
+    /**
+     * 상태별 숙소 관리 목록 조회 (승인 대기, 삭제 대기 등)
+     */
+//    @GetMapping("/manage")
+//    public ResponseEntity<List<House>> getPendingHouses(
+//            @RequestBody AdminHouseManageRequestDto dto) {
+//        
+//        // 서비스에서 해당 status를 가진 숙소 리스트를 가져옴
+//        List<House> houses = adminService.getHousesByStatus(dto.getStatus());
+//        
+//        return ResponseEntity.ok(houses);
+//    }
 
 }
