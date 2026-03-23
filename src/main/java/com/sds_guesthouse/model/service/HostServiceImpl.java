@@ -1,5 +1,8 @@
 package com.sds_guesthouse.model.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.model.dao.HostMapper;
 import com.sds_guesthouse.model.dto.host.HostIdDuplicateCheckResponseDto;
@@ -8,10 +11,6 @@ import com.sds_guesthouse.model.dto.host.HostSignupRequestDto;
 import com.sds_guesthouse.model.entity.Host;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
