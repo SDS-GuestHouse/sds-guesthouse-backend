@@ -3,6 +3,7 @@ package com.sds_guesthouse.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,4 +77,18 @@ public class HouseController {
         
         return ResponseEntity.ok(reservations);
     }
+    
+    @GetMapping
+    public ResponseEntity<List<House>> getAvailableHouses(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam String location,
+            @RequestParam int numberOfGuests) {
+
+        List<House> availableHouses = houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests);
+
+        return ResponseEntity.ok(availableHouses);
+    }
+    
+    
 }
