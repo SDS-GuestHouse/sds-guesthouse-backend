@@ -18,7 +18,8 @@ import jakarta.validation.constraints.Size;
 @Retention(RetentionPolicy.RUNTIME)
 @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
 @Size(min = 8, max = 20, message = "비밀번호는 8~20자 사이여야 합니다.")
-@Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$)*$", message = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다.")
+@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).+$", 
+message = "비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.")
 public @interface ValidPassword {
     String message() default "비밀번호 형식이 올바르지 않습니다.";
     Class<?>[] groups() default {};
