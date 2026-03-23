@@ -9,9 +9,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 public class SecurityConfig {
+	
+	@Bean
+    public SecurityContextRepository securityContextRepository() {
+        // 세션을 사용하여 보안 컨텍스트를 유지하는 가장 일반적인 방식입니다.
+        return new HttpSessionSecurityContextRepository();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
