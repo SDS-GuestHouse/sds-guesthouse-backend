@@ -38,4 +38,10 @@
         FROM reservations
         WHERE reservation_id = #{reservationId}
     </select>
+    
+    <update id="updateReservationStatus">
+	    UPDATE reservations
+	    SET status = #{status}, updated_at = NOW()
+	    WHERE reservation_id = #{reservationId}
+	</update>
 </mapper>
