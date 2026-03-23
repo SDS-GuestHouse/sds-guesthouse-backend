@@ -8,4 +8,5 @@ import java.util.List;
 public interface ReservationService {
     List<Reservation> getReservations(ReservationStatus status, String date);
     Reservation getReservationByReservationId(Long reservationId);
+    String cancelReservation(Long reservationId);
 }

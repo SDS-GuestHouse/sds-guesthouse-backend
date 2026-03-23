@@ -24,5 +24,17 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation getReservationByReservationId(Long reservationId) {
     	return reservationMapper.findReservationByReservationId(reservationId);
     }
-
+    
+    @Override
+    public String cancelReservation(Long reservationId) {
+        Reservation reservation = reservationMapper.findReservationByReservationId(reservationId);
+        if (reservation == null) {
+            return "NOT_FOUND";
+        }
+        if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+            return "ALREADY_CANCELLED";
+        }
+        reservationMapper.updateReservationStatus(reservationId, ReservationStatus.CANCELLED);
+        return "SUCCESS";
+    }
 }
