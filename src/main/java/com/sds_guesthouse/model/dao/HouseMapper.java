@@ -1,8 +1,11 @@
 package com.sds_guesthouse.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sds_guesthouse.model.entity.House;
+import com.sds_guesthouse.model.entity.Reservation;
 
 @Mapper
 public interface HouseMapper {
@@ -15,4 +18,5 @@ public interface HouseMapper {
     int insertHouse(House house);
     House findById(Long houseId);
     int updateHouse(House house);
+	List<Reservation> findReservationsByHouseId(Long houseId);
 }
