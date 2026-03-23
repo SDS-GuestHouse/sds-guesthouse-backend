@@ -23,6 +23,6 @@ public interface AdminService {
      * @return 기준에 부합하는 House 목록
      * @throws
      */
-//	List<House> getHousesByStatus(HouseStatus status);
+	List<House> getHousesByStatus(HouseStatus status);
 
 }

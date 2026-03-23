@@ -1,7 +1,5 @@
 package com.sds_guesthouse.model.dto.admin;
 
-import com.sds_guesthouse.model.dto.host.HostSignupRequestDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

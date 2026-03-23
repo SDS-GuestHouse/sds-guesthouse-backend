@@ -1,8 +1,6 @@
 package com.sds_guesthouse.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sds_guesthouse.model.dto.admin.AdminHouseManageRequestDto;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.entity.Admin;
-import com.sds_guesthouse.model.entity.Host;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.service.AdminService;
-import com.sds_guesthouse.model.service.HostService;
 import com.sds_guesthouse.security.SessionUser;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,14 +71,14 @@ public class AdminController {
     /**
      * 상태별 숙소 관리 목록 조회 (승인 대기, 삭제 대기 등)
      */
-//    @GetMapping("/manage")
-//    public ResponseEntity<List<House>> getPendingHouses(
-//            @RequestBody AdminHouseManageRequestDto dto) {
-//        
-//        // 서비스에서 해당 status를 가진 숙소 리스트를 가져옴
-//        List<House> houses = adminService.getHousesByStatus(dto.getStatus());
-//        
-//        return ResponseEntity.ok(houses);
-//    }
+    @GetMapping("/manage")
+    public ResponseEntity<List<House>> getPendingHouses(
+            @RequestBody AdminHouseManageRequestDto dto) {
+        
+        // 서비스에서 해당 status를 가진 숙소 리스트를 가져옴
+        List<House> houses = adminService.getHousesByStatus(dto.getStatus());
+        
+        return ResponseEntity.ok(houses);
+    }
 
 }
