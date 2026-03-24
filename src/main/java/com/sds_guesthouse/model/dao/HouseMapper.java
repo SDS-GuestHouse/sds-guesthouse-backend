@@ -23,5 +23,5 @@ public interface HouseMapper {
 	List<Reservation> findReservationsByHouseId(Long houseId);
 	List<House> findByStatus(HouseStatus status);
 	int updateStatus(long houseId, HouseStatus status);
-	List<House> findAvailableHouses(LocalDate startDate, LocalDate endDate, String location, int numberOfGuests);
+	List<House> findAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests);
 }

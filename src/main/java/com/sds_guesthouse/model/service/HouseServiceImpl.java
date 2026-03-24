@@ -111,7 +111,7 @@ public class HouseServiceImpl implements HouseService {
     }
     
     @Override
-    public List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, int numberOfGuests) {
+    public List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests) {
     	List<House> availableHouses = houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
     	
     	return availableHouses;
