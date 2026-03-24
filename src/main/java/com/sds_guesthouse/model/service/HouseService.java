@@ -17,5 +17,5 @@ public interface HouseService {
     void updateHouse(Long houseId, HouseRequestDto dto);
     void deleteHouse(Long houseId);
     List<Reservation> getReservationsByHouseId(Long houseId);
-    List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, int numberOfGuests);
+    List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests);
 }
