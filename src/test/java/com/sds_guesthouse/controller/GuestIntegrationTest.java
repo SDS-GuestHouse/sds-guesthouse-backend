@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -184,6 +186,47 @@ class GuestIntegrationTest {
                             }
                             """))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("host image upload returns success message and delegates to service")
+    void hostImageUpload_success_returnsCurrentResponseContract() throws Exception {
+        when(hostService.login(any())).thenReturn(sessionUser(2L, "host-user", "ROLE_HOST"));
+        MockHttpSession session = signInAsHost();
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "house.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                new byte[] {1, 2, 3}
+        );
+
+        mockMvc.perform(multipart("/api/v1/house/1/image")
+                        .file(imageFile)
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Image uploaded successfully."));
+
+        verify(houseService).uploadHouseImage(eq(1L), any());
+    }
+
+    @Test
+    @DisplayName("host image upload rejects empty file before service call")
+    void hostImageUpload_emptyFile_returnsBadRequest() throws Exception {
+        when(hostService.login(any())).thenReturn(sessionUser(2L, "host-user", "ROLE_HOST"));
+        MockHttpSession session = signInAsHost();
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "empty.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                new byte[0]
+        );
+
+        mockMvc.perform(multipart("/api/v1/house/1/image")
+                        .file(imageFile)
+                        .session(session))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(houseService);
     }
 
     @Test

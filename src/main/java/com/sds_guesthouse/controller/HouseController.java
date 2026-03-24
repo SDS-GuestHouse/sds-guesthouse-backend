@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,11 +94,18 @@ public class HouseController {
         return ResponseEntity.ok(houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests));
     }
 
-    @PostMapping("/{houseId}/image")
+    @PostMapping(
+            value = "/{houseId}/image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<Map<String, String>> uploadHouseImage(
             @PathVariable Long houseId,
             @RequestParam("imageFile") MultipartFile imageFile
     ) {
+        if (imageFile.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         houseService.uploadHouseImage(houseId, imageFile);
 
         Map<String, String> response = new HashMap<>();

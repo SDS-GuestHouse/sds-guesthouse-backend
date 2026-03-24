@@ -89,11 +89,13 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
         		.requestMatchers(
         	            "/api/v1/guest/signup", "/api/v1/guest/signin", "/api/v1/guest/check",
         	            "/api/v1/host/signup", "/api/v1/host/signin", "/api/v1/host/check",
         	            "/api/v1/logout"
         	        ).permitAll()
+        	        
         	        .requestMatchers(HttpMethod.POST, "/api/v1/house/{id}/reserve").hasRole("GUEST")
         	        .requestMatchers(HttpMethod.GET, "/api/v1/house/my-house").hasRole("HOST")
         	        .requestMatchers(HttpMethod.POST, "/api/v1/house").hasRole("HOST")
