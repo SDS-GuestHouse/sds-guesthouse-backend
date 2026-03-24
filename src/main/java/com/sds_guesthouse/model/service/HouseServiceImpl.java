@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
+import com.sds_guesthouse.model.dao.HouseImageMapper;
 import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;

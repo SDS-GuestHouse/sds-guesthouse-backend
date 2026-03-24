@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sds_guesthouse.model.dao.HouseImageMapper">
+
+    <!-- houseId에 대한 최대 display_order 값 조회 -->
+    <select id="findMaxOrderByHouseId" resultType="Integer">
+        SELECT MAX(`display_order`) 
+        FROM house_images
+        WHERE house_id = #{houseId}
+    </select>
+
+    <!-- 이미지 정보 삽입 -->
+    <insert id="insertHouseImage">
+        INSERT INTO house_images (house_id, image_path, `display_order`, created_at, updated_at)
+        VALUES (#{houseId}, #{imagePath}, #{display_order}, NOW(), NOW())
+    </insert>
+
+</mapper>
