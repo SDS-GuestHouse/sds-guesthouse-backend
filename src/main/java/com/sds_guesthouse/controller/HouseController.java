@@ -4,11 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.time.LocalDate;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.model.service.HouseService;
+import com.sds_guesthouse.model.service.HouseImageService;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.Reservation;
 import com.sds_guesthouse.model.entity.House;
@@ -23,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class HouseController {
 
     private final HouseService houseService;
-
+    private final HouseImageService houseImageService;
     /**
      * 숙소 등록 요청 API
      * POST /api/v1/houses
@@ -88,6 +93,22 @@ public class HouseController {
         List<House> availableHouses = houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests);
 
         return ResponseEntity.ok(availableHouses);
+    }
+    
+    @PostMapping("/{houseId}/image")
+    public ResponseEntity<Map<String, String>> uploadHouseImage(
+            @PathVariable Long houseId, 
+            @RequestParam("imageFile") MultipartFile imageFile) {
+
+        Map<String, String> response = new HashMap<>();
+        try {
+            houseImageService.uploadHouseImage(houseId, imageFile);
+            response.put("message", "이미지 업로드 성공");
+        } catch (Exception e) {
+            response.put("message", "이미지 업로드 실패");
+        }
+        return ResponseEntity.ok(response);
+
     }
     
     
