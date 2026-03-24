@@ -126,7 +126,7 @@ public class SecurityConfig {
             SecurityContextRepository securityContextRepository
     ) throws Exception {
         http
-        	.cors(cors -> {})
+        	.cors(cors -> {}) // CorsConfigurationSource 라는 이름의 Bean을 자동으로 찾아서 연결
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
