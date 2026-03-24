@@ -1,18 +1,22 @@
 package com.sds_guesthouse.model.service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
-import com.sds_guesthouse.model.dao.HouseImageMapper;
 import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 import com.sds_guesthouse.model.entity.Reservation;
+import com.sds_guesthouse.util.auth.SessionUserProvider;
 
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,102 +24,96 @@ import lombok.RequiredArgsConstructor;
 public class HouseServiceImpl implements HouseService {
 
     private final HouseMapper houseMapper;
+    private final HouseImageService houseImageService;
+    private final SessionUserProvider sessionUserProvider;
 
     @Override
     @Transactional
     public void createHouse(HouseRequestDto dto) {
-
-        // TODO: 나중에 로그인 붙이면 실제 hostId 가져오기
-        Long hostId = getCurrentHostId();
-
         House house = House.builder()
-                .hostId(hostId)
+                .hostId(sessionUserProvider.getCurrentUserId())
                 .name(dto.getName())
                 .address(dto.getAddress())
                 .price(dto.getPrice())
                 .maxGuests(dto.getMaxGuests())
                 .description(dto.getDescription())
-                .status(HouseStatus.CREATE_PENDING) // 관리자 승인 대기
+                .status(HouseStatus.CREATE_PENDING)
                 .build();
 
-        int result = houseMapper.insertHouse(house);
-
-        if (result == 0) {
-            throw new ExplicitMessageException("숙소 등록에 실패했습니다.");
+        if (houseMapper.insertHouse(house) == 0) {
+            throw new ExplicitMessageException("Failed to create house.");
         }
     }
 
-    /**
-     * 임시 hostId (테스트용)
-     */
-    private Long getCurrentHostId() {
-        return 1L;
-    }
-    
     @Override
-	public House getHouseDetail(Long houseId) {
-	
-	    House house = houseMapper.findById(houseId);
-	
-	    if (house == null) {
-	        throw new IllegalArgumentException("해당 숙소가 존재하지 않습니다.");
-	    }
-	
-	    return house;
-	}
-    
+    public House getHouseDetail(Long houseId) {
+        House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new ExplicitMessageException("House not found.");
+        }
+        return house;
+    }
+
+    @Override
+    public List<House> getMyHouses() {
+        return houseMapper.findByHostId(sessionUserProvider.getCurrentUserId());
+    }
+
     @Override
     @Transactional
     public void updateHouse(Long houseId, HouseRequestDto dto) {
-        // 1. 기존 숙소 정보 조회
-        House house = houseMapper.findById(houseId);
-        if (house == null) {
-            throw new IllegalArgumentException("해당 숙소가 존재하지 않습니다.");
-        }
-        // 2. 수정된 데이터 반영
+        House house = requireOwnedHouse(houseId);
         house.setName(dto.getName());
         house.setAddress(dto.getAddress());
         house.setPrice(dto.getPrice());
         house.setMaxGuests(dto.getMaxGuests());
         house.setDescription(dto.getDescription());
-     
-        // 3. DB에 업데이트
-        int result = houseMapper.updateHouse(house);
-        if (result == 0) {
-            throw new ExplicitMessageException("숙소 정보 수정에 실패했습니다.");
+
+        if (houseMapper.updateHouse(house) == 0) {
+            throw new ExplicitMessageException("Failed to update house.");
         }
     }
-    
+
     @Override
     @Transactional
     public void deleteHouse(Long houseId) {
-        // 1. 숙소 정보 조회
-        House house = houseMapper.findById(houseId);
-        if (house == null) {
-            throw new ExplicitMessageException("해당 숙소가 존재하지 않습니다.");
-        }
-
-        // 2. 숙소의 상태를 DELETED_PENDING로 업데이트
+        House house = requireOwnedHouse(houseId);
         house.setStatus(HouseStatus.DELETE_PENDING);
-        
-        // 3. DB에 업데이트
-        int result = houseMapper.updateHouse(house);
-        if (result == 0) {
-            throw new ExplicitMessageException("숙소 삭제 요청에 실패했습니다.");
+
+        if (houseMapper.updateHouse(house) == 0) {
+            throw new ExplicitMessageException("Failed to request house deletion.");
         }
     }
-    
+
     @Override
     public List<Reservation> getReservationsByHouseId(Long houseId) {
-        // 주어진 houseId에 해당하는 예약 정보 목록 조회
+        requireOwnedHouse(houseId);
         return houseMapper.findReservationsByHouseId(houseId);
     }
-    
+
     @Override
     public List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests) {
-    	List<House> availableHouses = houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
-    	
-    	return availableHouses;
-    };
+        return houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
+    }
 
+    @Override
+    public void uploadHouseImage(Long houseId, MultipartFile imageFile) {
+        requireOwnedHouse(houseId);
+        try {
+            houseImageService.uploadHouseImage(houseId, imageFile);
+        } catch (IOException e) {
+            throw new ExplicitMessageException("Failed to upload house image.");
+        }
+    }
+
+    private House requireOwnedHouse(Long houseId) {
+        House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new ExplicitMessageException("House not found.");
+        }
+        if (!house.getHostId().equals(sessionUserProvider.getCurrentUserId())) {
+            throw new AccessDeniedException("You do not own this house.");
+        }
+        return house;
+    }
 }
