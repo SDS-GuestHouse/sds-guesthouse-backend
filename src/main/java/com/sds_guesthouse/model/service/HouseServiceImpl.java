@@ -3,9 +3,11 @@ package com.sds_guesthouse.model.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseImageMapper;
 import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.dto.house.HouseCreateResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
@@ -23,10 +25,7 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     @Transactional
-    public void createHouse(HouseRequestDto dto) {
-
-        // TODO: 나중에 로그인 붙이면 실제 hostId 가져오기
-        Long hostId = getCurrentHostId();
+    public HouseCreateResponseDto createHouse(Long hostId, HouseRequestDto dto) {
 
         House house = House.builder()
                 .hostId(hostId)
@@ -35,13 +34,14 @@ public class HouseServiceImpl implements HouseService {
                 .price(dto.getPrice())
                 .maxGuests(dto.getMaxGuests())
                 .description(dto.getDescription())
-                .status(HouseStatus.CREATE_PENDING) // 관리자 승인 대기
+                .status(HouseStatus.CREATE_PENDING)
                 .build();
 
-        int result = houseMapper.insertHouse(house);
-
-        if (result == 0) {
-            throw new ExplicitMessageException("숙소 등록에 실패했습니다.");
+        int cnt = houseMapper.insertHouse(house);
+        if (cnt == 0) {
+            throw new BusinessException("숙소 등록에 실패했습니다.");
+        } else {
+        	return HouseCreateResponseDto.builder().houseId(house.getHouseId()).build();
         }
     }
 
@@ -66,11 +66,11 @@ public class HouseServiceImpl implements HouseService {
     
     @Override
     @Transactional
-    public void updateHouse(Long houseId, HouseRequestDto dto) {
+    public void updateHouse(Long hostId, Long houseId, HouseRequestDto dto) {
         // 1. 기존 숙소 정보 조회
         House house = houseMapper.findById(houseId);
         if (house == null) {
-            throw new IllegalArgumentException("해당 숙소가 존재하지 않습니다.");
+            throw new BusinessException("해당 숙소가 존재하지 않습니다.");
         }
         // 2. 수정된 데이터 반영
         house.setName(dto.getName());
@@ -82,7 +82,7 @@ public class HouseServiceImpl implements HouseService {
         // 3. DB에 업데이트
         int result = houseMapper.updateHouse(house);
         if (result == 0) {
-            throw new ExplicitMessageException("숙소 정보 수정에 실패했습니다.");
+            throw new BusinessException("숙소 정보 수정에 실패했습니다.");
         }
     }
     

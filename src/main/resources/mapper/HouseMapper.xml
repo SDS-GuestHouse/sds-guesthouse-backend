@@ -4,7 +4,9 @@
 
 <mapper namespace="com.sds_guesthouse.model.dao.HouseMapper">
 
-    <insert id="insertHouse" parameterType="com.sds_guesthouse.model.entity.House">
+    <insert id="insertHouse" parameterType="com.sds_guesthouse.model.entity.House" 
+    	useGeneratedKeys="true"
+    	keyProperty="houseId">
         INSERT INTO houses (
             host_id,
             name,

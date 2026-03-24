@@ -1,18 +1,8 @@
 package com.sds_guesthouse.model.service;
 
-import com.sds_guesthouse.model.dao.HouseImageMapper;
-import com.sds_guesthouse.model.entity.HouseImage;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public interface HouseImageService {
 
