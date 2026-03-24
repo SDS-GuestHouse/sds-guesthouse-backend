@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,9 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
-
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -86,17 +89,26 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/v1/guest/signup",
-                    "/api/v1/guest/signin",
-                    "/api/v1/guest/check",
-                    "/api/v1/host/signup",
-                    "/api/v1/host/signin",
-                    "/api/v1/host/check"
-                ).permitAll()
-                .requestMatchers("/api/v1/guest/**").hasRole("GUEST")
-                .requestMatchers("/api/v1/host/**").hasRole("HOST")
+        		.requestMatchers(
+        	            "/api/v1/guest/signup", "/api/v1/guest/signin", "/api/v1/guest/check",
+        	            "/api/v1/host/signup", "/api/v1/host/signin", "/api/v1/host/check",
+        	            "/api/v1/logout"
+        	        ).permitAll()
+        	        .requestMatchers(HttpMethod.POST, "/api/v1/house/{id}/reserve").hasRole("GUEST")
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/house/my-house").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.POST, "/api/v1/house").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.POST, "/api/v1/house/{id}/image").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.PUT, "/api/v1/house/{id}").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.DELETE, "/api/v1/house/{id}").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/house/{id}/reservation").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/house", "/api/v1/house/{houseId}").permitAll()
+        	        
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/reservation").hasRole("GUEST")
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/reservation/{id}").hasRole("GUEST")
+        	        .requestMatchers(HttpMethod.DELETE, "/api/v1/reservation/{id}").hasRole("GUEST")
                 .anyRequest().denyAll()
+            		
+//            		.anyRequest().permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl(APP_LOGOUT_URL)
@@ -114,6 +126,7 @@ public class SecurityConfig {
             SecurityContextRepository securityContextRepository
     ) throws Exception {
         http
+        	.cors(cors -> {})
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
@@ -157,5 +170,22 @@ public class SecurityConfig {
 
     private boolean isExactPath(HttpServletRequest request, String path) {
         return (request.getContextPath() + path).equals(request.getRequestURI());
+    }
+    
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:5173", 
+        		"http://192.168.50.131:5173",
+        		"http://192.168.50.156:5173",
+        		"http://192.168.50.19:5173"));
+        
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
