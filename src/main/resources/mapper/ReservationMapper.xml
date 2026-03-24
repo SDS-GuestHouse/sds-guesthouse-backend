@@ -3,7 +3,39 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sds_guesthouse.model.dao.ReservationMapper">
-    <select id="findReservations" resultType="com.sds_guesthouse.model.entity.Reservation">
+
+    <insert id="insertReservation" parameterType="com.sds_guesthouse.model.entity.Reservation">
+        INSERT INTO reservations (
+            guest_id,
+            house_id,
+            status,
+            checkin_date,
+            checkout_date,
+            total_price,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{guestId},
+            #{houseId},
+            #{status},
+            #{checkinDate},
+            #{checkoutDate},
+            #{totalPrice},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <select id="countOverlappingActiveReservations" resultType="int">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE house_id = #{houseId}
+          AND status != 'CANCELLED'
+          AND checkin_date &lt; #{checkoutDate}
+          AND checkout_date &gt; #{checkinDate}
+    </select>
+
+    <select id="findReservationsByGuestId" resultType="com.sds_guesthouse.model.entity.Reservation">
         SELECT
             reservation_id AS reservationId,
             guest_id AS guestId,
@@ -15,15 +47,32 @@
             created_at AS createdAt,
             updated_at AS updatedAt
         FROM reservations
-        WHERE 1=1
-	    <if test="status != null">
-	        AND status = #{status}
-	    </if>	
-	    <if test="date != null and date != ''">
-	        AND #{date} BETWEEN checkin_date AND checkout_date
-	    </if>
+        WHERE guest_id = #{guestId}
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="date != null and date != ''">
+            AND #{date} BETWEEN checkin_date AND checkout_date
+        </if>
+        ORDER BY created_at DESC
     </select>
-    
+
+    <select id="findReservationByReservationIdAndGuestId" resultType="com.sds_guesthouse.model.entity.Reservation">
+        SELECT
+            reservation_id AS reservationId,
+            guest_id AS guestId,
+            house_id AS houseId,
+            status,
+            checkin_date AS checkinDate,
+            checkout_date AS checkoutDate,
+            total_price AS totalPrice,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM reservations
+        WHERE reservation_id = #{reservationId}
+          AND guest_id = #{guestId}
+    </select>
+
     <select id="findReservationByReservationId" resultType="com.sds_guesthouse.model.entity.Reservation">
         SELECT
             reservation_id AS reservationId,
@@ -38,10 +87,11 @@
         FROM reservations
         WHERE reservation_id = #{reservationId}
     </select>
-    
+
     <update id="updateReservationStatus">
-	    UPDATE reservations
-	    SET status = #{status}, updated_at = NOW()
-	    WHERE reservation_id = #{reservationId}
-	</update>
+        UPDATE reservations
+        SET status = #{status}, updated_at = NOW()
+        WHERE reservation_id = #{reservationId}
+    </update>
 </mapper>
+
