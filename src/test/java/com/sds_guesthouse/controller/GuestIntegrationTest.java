@@ -131,6 +131,9 @@ class GuestIntegrationTest {
         mockMvc.perform(get("/api/v1/house/my-house").session(session))
                 .andExpect(status().isForbidden());
 
+        mockMvc.perform(get("/api/v1/house/1/reservation").session(session))
+                .andExpect(status().isForbidden());
+
         verifyNoInteractions(houseService);
     }
 
@@ -186,6 +189,11 @@ class GuestIntegrationTest {
                             }
                             """))
                 .andExpect(status().isForbidden());
+
+        mockMvc.perform(get("/api/v1/reservation").session(session))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(reservationService);
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.sds_guesthouse.controller;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 
 import com.sds_guesthouse.model.service.ReservationService;
@@ -19,6 +20,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    @PreAuthorize("hasRole('GUEST')")
     @GetMapping
     public ResponseEntity<List<Reservation>> getReservations(
             @RequestParam(required = false) ReservationStatus status,
