@@ -45,6 +45,8 @@ public class AdminController {
             HttpServletRequest request,
             HttpServletResponse response) {
     	
+    	
+    	
     	SessionUser sessionUser = adminService.login(dto);
     	securityLoginService.login(sessionUser, request, response);
         return ResponseEntity.ok().build();

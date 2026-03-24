@@ -72,14 +72,16 @@ public class HouseServiceImpl implements HouseService {
         if (house == null) {
             throw new BusinessException("해당 숙소가 존재하지 않습니다.");
         }
-        // 2. 수정된 데이터 반영
+        if (house.getHostId() != hostId) {
+        	throw new BusinessException("해당 숙소의 수정 권한이 없습니다.");
+        }
+        
         house.setName(dto.getName());
         house.setAddress(dto.getAddress());
         house.setPrice(dto.getPrice());
         house.setMaxGuests(dto.getMaxGuests());
         house.setDescription(dto.getDescription());
      
-        // 3. DB에 업데이트
         int result = houseMapper.updateHouse(house);
         if (result == 0) {
             throw new BusinessException("숙소 정보 수정에 실패했습니다.");
@@ -88,12 +90,15 @@ public class HouseServiceImpl implements HouseService {
     
     @Override
     @Transactional
-    public void deleteHouse(Long houseId) {
+    public void deleteHouse(Long hostId, Long houseId) {
     	
     	// 1. 숙소 정보 조회
         House house = houseMapper.findById(houseId);
         if (house == null) {
             throw new BusinessException("해당 숙소가 존재하지 않습니다.");
+        }
+        if (house.getHostId() != hostId) {
+        	throw new BusinessException("해당 숙소의 수정 권한이 없습니다.");
         }
 
         // 2. 숙소의 상태를 DELETED_PENDING로 업데이트
@@ -107,7 +112,15 @@ public class HouseServiceImpl implements HouseService {
     }
     
     @Override
-    public List<Reservation> getReservationsByHouseId(Long houseId) {
+    public List<Reservation> getReservationsByHouseId(Long hostId, Long houseId) {
+    	House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new BusinessException("해당 숙소가 존재하지 않습니다.");
+        }
+        if (house.getHostId() != hostId) {
+        	throw new BusinessException("해당 숙소의 조회 권한이 없습니다.");
+        }
+
         // 주어진 houseId에 해당하는 예약 정보 목록 조회
         return houseMapper.findReservationsByHouseId(houseId);
     }
@@ -117,6 +130,12 @@ public class HouseServiceImpl implements HouseService {
     	List<House> availableHouses = houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
     	
     	return availableHouses;
-    };
+    }
+
+	@Override
+	public List<House> getMyHouses(Long hostId) {
+		List<House> myHouses = houseMapper.findMyHouses(hostId);
+		return myHouses;
+	};
 
 }

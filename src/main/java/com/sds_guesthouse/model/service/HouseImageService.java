@@ -13,5 +13,5 @@ public interface HouseImageService {
     public void saveImageFile(MultipartFile imageFile, String imagePath) throws IOException;
 
     // 이미지 업로드 및 DB 저장
-    public void uploadHouseImage(Long houseId, MultipartFile imageFile) throws IOException;
+    public void uploadHouseImage(Long hostId, Long houseId, MultipartFile imageFile);
 }

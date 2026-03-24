@@ -135,5 +135,22 @@
 	        AND r.reservation_id IS NULL
 	    </if>
 	</select>
+	
+	<select id="findMyHouses" parameterType="long" resultType="com.sds_guesthouse.model.entity.House">
+        SELECT
+            house_id AS houseId,
+            host_id AS hostId,
+            name,
+            address,
+            price,
+            max_guests AS maxGuests,
+            description,
+            status,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM houses
+        WHERE host_id = #{hostId}
+        ORDER BY created_at DESC
+    </select>
 
 </mapper>

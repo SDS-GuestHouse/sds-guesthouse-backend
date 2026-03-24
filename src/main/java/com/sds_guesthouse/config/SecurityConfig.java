@@ -36,7 +36,10 @@ public class SecurityConfig {
     private static final String APP_LOGOUT_URL = "/api/v1/logout";
 
     private static final List<IpAddressMatcher> ADMIN_ALLOWED_IPS = List.of(
-        new IpAddressMatcher("0.0.0.0/0") // NEED TO BE CHANGED!!
+        new IpAddressMatcher("0.0.0.0/0")
+        , 
+        new IpAddressMatcher("127.0.0.1"),
+        new IpAddressMatcher("0:0:0:0:0:0:0:1")
     );
 
     @Bean

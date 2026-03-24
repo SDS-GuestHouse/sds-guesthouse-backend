@@ -9,7 +9,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.model.dao.HouseImageMapper;
+import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseImage;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HouseImageServiceImpl implements HouseImageService{
 
+	private final HouseMapper houseMapper;
     private final HouseImageMapper houseImageMapper;
 
     // 이미지 순서 자동 생성
@@ -34,7 +38,15 @@ public class HouseImageServiceImpl implements HouseImageService{
     }
 
     // 이미지 업로드 및 DB 저장
-    public void uploadHouseImage(Long houseId, MultipartFile imageFile) throws IOException {
+    public void uploadHouseImage(Long hostId, Long houseId, MultipartFile imageFile) {
+    	
+        House house = houseMapper.findById(houseId);
+        if (house == null) {
+            throw new BusinessException("해당 숙소가 존재하지 않습니다.");
+        }
+        if (house.getHostId() != hostId) {
+        	throw new BusinessException("해당 숙소의 수정 권한이 없습니다.");
+        }
 
     	int display_order = getNextImageOrder(houseId); // 다음 이미지 순서 계산
 
@@ -42,12 +54,16 @@ public class HouseImageServiceImpl implements HouseImageService{
         String extension = "jpg";
         String imagePath = UUID.randomUUID().toString() + "." + extension;  // UUID로 파일 이름 생성
         
+        try {
         // 이미지 파일 저장
-        saveImageFile(imageFile, imagePath);
-
-        // HouseImage 엔티티 생성
-        HouseImage houseImage = new HouseImage(null, houseId, imagePath, display_order, null, null);
-        // MyBatis를 이용해 DB에 이미지 정보 삽입
-        houseImageMapper.insertHouseImage(houseImage);
+	        saveImageFile(imageFile, imagePath);
+	
+	        // HouseImage 엔티티 생성
+	        HouseImage houseImage = new HouseImage(null, houseId, imagePath, display_order, null, null);
+	        // MyBatis를 이용해 DB에 이미지 정보 삽입
+	        houseImageMapper.insertHouseImage(houseImage);
+        } catch (Exception ex) {
+        	throw new BusinessException(ex.getMessage());
+        }
     }
 }

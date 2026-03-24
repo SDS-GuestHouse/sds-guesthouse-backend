@@ -1,5 +1,6 @@
 package com.sds_guesthouse.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sds_guesthouse.exception.BusinessException;
 import com.sds_guesthouse.model.dto.house.HouseCreateResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
@@ -67,8 +69,6 @@ public class HouseController {
         @PathVariable Long houseId, 
         @Valid @RequestBody HouseRequestDto dto,
         @AuthenticationPrincipal SessionUser sessionUser) {
-    	
-    	
 	    houseService.updateHouse(sessionUser.getId(), houseId, dto);
 	    return ResponseEntity.ok().build();
     }
@@ -78,8 +78,9 @@ public class HouseController {
      * /api/v1/house/{id}
      */
     @DeleteMapping("/{houseId}")
-    public ResponseEntity<Void> deleteHouse(@PathVariable Long houseId) {
-        houseService.deleteHouse(houseId);
+    public ResponseEntity<Void> deleteHouse(@PathVariable Long houseId,
+    		@AuthenticationPrincipal SessionUser sessionUser) {
+        houseService.deleteHouse(sessionUser.getId(), houseId);
 
         return ResponseEntity.ok().build();
     }
@@ -89,8 +90,9 @@ public class HouseController {
      * /api/v1/house/{id}/reservation
      */
     @GetMapping("/{houseId}/reservation")
-    public ResponseEntity<List<Reservation>> getReservationsByHouseId(@PathVariable Long houseId) {
-        List<Reservation> reservations = houseService.getReservationsByHouseId(houseId);
+    public ResponseEntity<List<Reservation>> getReservationsByHouseId(@PathVariable Long houseId,
+    		@AuthenticationPrincipal SessionUser sessionUser) {
+        List<Reservation> reservations = houseService.getReservationsByHouseId(sessionUser.getId(), houseId);
         
         return ResponseEntity.ok(reservations);
     }
@@ -112,22 +114,26 @@ public class HouseController {
     }
     
     /**
+     * 나의 숙소 목록 조회
+     */
+    @GetMapping("/my-house")
+    public ResponseEntity<List<House>> getMyHouseList (@AuthenticationPrincipal SessionUser sessionUser) {
+    	List<House> myHouseList = houseService.getMyHouses(sessionUser.getId());
+		return ResponseEntity.ok(myHouseList);
+    	
+    }
+    
+    /**
      * 이미지 업로드
      * /api/v1/house/{houseId}/image
      */
     @PostMapping("/{houseId}/image")
-    public ResponseEntity<Map<String, String>> uploadHouseImage(
+    public ResponseEntity<Void> uploadHouseImage(
             @PathVariable Long houseId, 
-            @RequestParam("imageFile") MultipartFile imageFile) {
-
-        Map<String, String> response = new HashMap<>();
-        try {
-            houseImageService.uploadHouseImage(houseId, imageFile);
-            response.put("message", "이미지 업로드 성공");
-        } catch (Exception e) {
-            response.put("message", "이미지 업로드 실패");
-        }
-        return ResponseEntity.ok(response);
+            @RequestParam("imageFile") MultipartFile imageFile,
+            @AuthenticationPrincipal SessionUser sessionUser) {
+		houseImageService.uploadHouseImage(sessionUser.getId(), houseId, imageFile);
+        return ResponseEntity.ok().build();
 
     }
     
