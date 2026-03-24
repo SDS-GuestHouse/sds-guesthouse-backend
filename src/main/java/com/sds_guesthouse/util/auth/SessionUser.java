@@ -1,5 +1,6 @@
 package com.sds_guesthouse.util.auth;
 
+import com.sds_guesthouse.model.entity.Admin;
 import com.sds_guesthouse.model.entity.Guest;
 import com.sds_guesthouse.model.entity.Host;
 
@@ -31,6 +32,14 @@ public class SessionUser {
                 .id(host.getHostId())
                 .name(host.getName())
                 .role("ROLE_HOST")
+                .build();
+    }
+    
+    public static SessionUser fromAdmin(Admin admin) {
+        return SessionUser.builder()
+                .id(admin.getAdminId())
+                .name(admin.getName())
+                .role("ROLE_ADMIN")
                 .build();
     }
 }

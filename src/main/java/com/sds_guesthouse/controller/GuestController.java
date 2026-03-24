@@ -16,6 +16,7 @@ import com.sds_guesthouse.util.auth.SessionUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
@@ -32,7 +33,7 @@ public class GuestController {
     */
     @PostMapping("/signup")
     public ResponseEntity<Void> signUp(
-            @RequestBody GuestSignupRequestDto dto
+            @Valid @RequestBody GuestSignupRequestDto dto
     ) {
         guestService.signUp(dto);
         return ResponseEntity.ok().build();
@@ -42,7 +43,7 @@ public class GuestController {
     Signin
     */
     @PostMapping("/signin")
-    public ResponseEntity<Void> signIn(
+    public ResponseEntity<Void> signIn(@Valid
             @RequestBody GuestSigninRequestDto dto,
             HttpServletRequest request,
             HttpServletResponse response
@@ -57,7 +58,7 @@ public class GuestController {
     */
     @PostMapping("/check")
     public ResponseEntity<GuestCheckResponseDto> checkUserId(
-        @RequestBody GuestCheckRequestDto dto
+        @Valid @RequestBody GuestCheckRequestDto dto
     ) {
         GuestCheckResponseDto response = guestService.checkUserId(dto);
         return ResponseEntity.ok(response);

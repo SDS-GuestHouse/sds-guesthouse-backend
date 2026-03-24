@@ -25,6 +25,10 @@ public class SecurityLoginService {
                       HttpServletRequest request,
                       HttpServletResponse response) {
 
+        if (request.getSession(false) != null) {
+            request.changeSessionId();
+        }
+
         var authentication = UsernamePasswordAuthenticationToken.authenticated(
                 sessionUser,
                 null,

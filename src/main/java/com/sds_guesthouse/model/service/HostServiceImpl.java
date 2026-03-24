@@ -9,6 +9,7 @@ import com.sds_guesthouse.model.dto.host.HostIdDuplicateCheckResponseDto;
 import com.sds_guesthouse.model.dto.host.HostSigninRequestDto;
 import com.sds_guesthouse.model.dto.host.HostSignupRequestDto;
 import com.sds_guesthouse.model.entity.Host;
+import com.sds_guesthouse.util.auth.SessionUser;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,14 +47,14 @@ public class HostServiceImpl implements HostService {
     }
     
     @Override
-    public Host login(HostSigninRequestDto dto) {
+    public SessionUser login(HostSigninRequestDto dto) {
         Host host = hostMapper.findByUserId(dto.getUserId());
         // 존재하지 않거나 비밀번호 불일치 시 예외 발생
         if (host == null || !passwordEncoder.matches(dto.getPassword(), host.getPassword())) {
             throw new BusinessException("아이디 또는 비밀번호가 일치하지 않습니다."); // IllegalArgumentException 핸들러가 처리함
         }
         
-        return host;
+        return SessionUser.fromHost(host);
     }
     
     @Override

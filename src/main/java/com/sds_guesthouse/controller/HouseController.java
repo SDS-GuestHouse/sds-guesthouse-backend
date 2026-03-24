@@ -85,10 +85,10 @@ public class HouseController {
     
     @GetMapping
     public ResponseEntity<List<House>> getAvailableHouses(
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate,
-            @RequestParam String location,
-            @RequestParam int numberOfGuests) {
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer numberOfGuests) {
 
         List<House> availableHouses = houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests);
 
