@@ -28,8 +28,8 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String ADMIN_SIGNIN_URL = "/admin/signin";
-    private static final String ADMIN_LOGOUT_URL = "/admin/logout";
+    private static final String ADMIN_SIGNIN_URL = "/api/v1/admin/signin";
+    private static final String ADMIN_LOGOUT_URL = "/api/v1/admin/logout";
     private static final String APP_LOGOUT_URL = "/api/v1/logout";
 
     private static final List<IpAddressMatcher> ADMIN_ALLOWED_IPS = List.of(
@@ -56,7 +56,7 @@ public class SecurityConfig {
         applyCommon(http, securityContextRepository);
 
         http
-            .securityMatcher("/admin/**")
+            .securityMatcher("/api/v1/admin/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(ADMIN_SIGNIN_URL).access(this::adminIpOnly)
                 .anyRequest().access(this::adminIpAndRole)
