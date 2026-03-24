@@ -89,10 +89,11 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional
     public void deleteHouse(Long houseId) {
-        // 1. 숙소 정보 조회
+    	
+    	// 1. 숙소 정보 조회
         House house = houseMapper.findById(houseId);
         if (house == null) {
-            throw new ExplicitMessageException("해당 숙소가 존재하지 않습니다.");
+            throw new BusinessException("해당 숙소가 존재하지 않습니다.");
         }
 
         // 2. 숙소의 상태를 DELETED_PENDING로 업데이트

@@ -67,6 +67,8 @@ public class HouseController {
         @PathVariable Long houseId, 
         @Valid @RequestBody HouseRequestDto dto,
         @AuthenticationPrincipal SessionUser sessionUser) {
+    	
+    	
 	    houseService.updateHouse(sessionUser.getId(), houseId, dto);
 	    return ResponseEntity.ok().build();
     }
@@ -78,9 +80,6 @@ public class HouseController {
     @DeleteMapping("/{houseId}")
     public ResponseEntity<Void> deleteHouse(@PathVariable Long houseId) {
         houseService.deleteHouse(houseId);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "숙소 삭제 요청이 완료되었습니다. 관리자 승인 대기 중입니다.");
 
         return ResponseEntity.ok().build();
     }
