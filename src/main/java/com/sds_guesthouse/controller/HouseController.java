@@ -29,36 +29,34 @@ public class HouseController {
      * POST /api/v1/houses
      */
     @PostMapping
-    public ResponseEntity<Map<String, String>> createHouse(
+    public ResponseEntity<Void> createHouse(
             @Valid @RequestBody HouseRequestDto dto) {
-
         houseService.createHouse(dto);
-
         Map<String, String> response = new HashMap<>();
-        response.put("message", "숙소 등록 요청이 완료되었습니다.");
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
     
+    /**
+     * 숙소 상세조회
+     * GET /api/v1/house/{houseId}
+     */
     @GetMapping("/{houseId}")
     public ResponseEntity<House> getHouseDetail(@PathVariable Long houseId) {
-
         House house = houseService.getHouseDetail(houseId);
-
         return ResponseEntity.ok(house);
     }
     
+    
+    /**
+     * 숙소 정보 수정
+     * GET /api/v1/house/{houseId}
+     */
     @PutMapping("/{houseId}")
-    public ResponseEntity<Map<String, String>> updateHouse(
+    public ResponseEntity<Void> updateHouse(
         @PathVariable Long houseId, 
         @Valid @RequestBody HouseRequestDto dto) {
-
 	    houseService.updateHouse(houseId, dto);
-	
-	    Map<String, String> response = new HashMap<>();
-	    response.put("message", "숙소 정보가 성공적으로 수정되었습니다.");
-	
-	    return ResponseEntity.ok(response);
+	    return ResponseEntity.ok().build();
     }
     
     @DeleteMapping("/{houseId}")
