@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
+import com.sds_guesthouse.model.dto.house.HouseResponseDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.Reservation;
 
@@ -13,7 +14,7 @@ public interface HouseService {
 
     void createHouse(HouseRequestDto dto);
 
-    House getHouseDetail(Long houseId);
+    HouseResponseDto getHouseDetail(Long houseId);
 
     List<House> getMyHouses();
 
