@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
@@ -22,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
+
+    private static final int HOUSE_PAGE_SIZE = 20;
 
     private final HouseMapper houseMapper;
     private final HouseImageService houseImageService;
@@ -98,8 +101,34 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<House> getAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests) {
-        return houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests);
+    public HouseListResponseDto getAvailableHouses(
+            LocalDate startDate,
+            LocalDate endDate,
+            String location,
+            Integer numberOfGuests,
+            Integer page
+    ) {
+        int normalizedPage = page == null || page < 1 ? 1 : page;
+        long totalCount = houseMapper.countAvailableHouses(startDate, endDate, location, numberOfGuests);
+        int totalPages = totalCount == 0 ? 0 : (int) ((totalCount + HOUSE_PAGE_SIZE - 1) / HOUSE_PAGE_SIZE);
+
+        List<House> houses = totalCount == 0
+                ? List.of()
+                : houseMapper.findAvailableHouses(
+                        startDate,
+                        endDate,
+                        location,
+                        numberOfGuests,
+                        HOUSE_PAGE_SIZE,
+                        (long) (normalizedPage - 1) * HOUSE_PAGE_SIZE
+                );
+
+        return HouseListResponseDto.builder()
+                .houses(houses)
+                .page(normalizedPage)
+                .totalPages(totalPages)
+                .totalCount(totalCount)
+                .build();
     }
 
     @Override

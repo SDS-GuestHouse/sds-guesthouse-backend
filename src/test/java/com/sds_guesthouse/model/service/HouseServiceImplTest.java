@@ -3,11 +3,15 @@ package com.sds_guesthouse.model.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +24,7 @@ import org.springframework.security.access.AccessDeniedException;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
@@ -86,6 +91,71 @@ class HouseServiceImplTest {
         );
 
         assertEquals("House not found.", thrown.getMessage());
+    }
+
+    @Test
+    void getAvailableHouses_normalizesInvalidPageAndUsesFixedPageSize() {
+        List<House> houses = List.of(House.builder().houseId(1L).name("House A").build());
+        when(houseMapper.countAvailableHouses(null, null, null, null)).thenReturn(1L);
+        when(houseMapper.findAvailableHouses(null, null, null, null, 20, 0L)).thenReturn(houses);
+
+        HouseListResponseDto response = houseService.getAvailableHouses(null, null, null, null, 0);
+
+        assertSame(houses, response.getHouses());
+        assertEquals(1, response.getPage());
+        assertEquals(1, response.getTotalPages());
+        assertEquals(1L, response.getTotalCount());
+        verify(houseMapper).countAvailableHouses(null, null, null, null);
+        verify(houseMapper).findAvailableHouses(null, null, null, null, 20, 0L);
+    }
+
+    @Test
+    void getAvailableHouses_returnsDifferentResultsForDifferentPages() {
+        LocalDate startDate = LocalDate.of(2026, 4, 1);
+        LocalDate endDate = LocalDate.of(2026, 4, 3);
+        String location = "Seoul";
+        Integer numberOfGuests = 4;
+
+        List<House> firstPageHouses = LongStream.rangeClosed(1, 20)
+                .mapToObj(id -> House.builder().houseId(id).name("House " + id).build())
+                .toList();
+        List<House> secondPageHouses = LongStream.rangeClosed(21, 25)
+                .mapToObj(id -> House.builder().houseId(id).name("House " + id).build())
+                .toList();
+
+        when(houseMapper.countAvailableHouses(startDate, endDate, location, numberOfGuests)).thenReturn(25L);
+        when(houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests, 20, 0L)).thenReturn(firstPageHouses);
+        when(houseMapper.findAvailableHouses(startDate, endDate, location, numberOfGuests, 20, 20L)).thenReturn(secondPageHouses);
+
+        HouseListResponseDto firstPage = houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests, 1);
+        HouseListResponseDto secondPage = houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests, 2);
+
+        assertEquals(20, firstPage.getHouses().size());
+        assertEquals(5, secondPage.getHouses().size());
+        assertEquals(1, firstPage.getPage());
+        assertEquals(2, secondPage.getPage());
+        assertEquals(2, firstPage.getTotalPages());
+        assertEquals(2, secondPage.getTotalPages());
+        assertEquals(25L, firstPage.getTotalCount());
+        assertEquals(25L, secondPage.getTotalCount());
+        assertEquals(1L, firstPage.getHouses().get(0).getHouseId());
+        assertEquals(21L, secondPage.getHouses().get(0).getHouseId());
+        verify(houseMapper).findAvailableHouses(startDate, endDate, location, numberOfGuests, 20, 0L);
+        verify(houseMapper).findAvailableHouses(startDate, endDate, location, numberOfGuests, 20, 20L);
+    }
+
+    @Test
+    void getAvailableHouses_returnsEmptyResultWhenNoHouseMatches() {
+        when(houseMapper.countAvailableHouses(null, null, "Busan", 2)).thenReturn(0L);
+
+        HouseListResponseDto response = houseService.getAvailableHouses(null, null, "Busan", 2, 3);
+
+        assertTrue(response.getHouses().isEmpty());
+        assertEquals(3, response.getPage());
+        assertEquals(0, response.getTotalPages());
+        assertEquals(0L, response.getTotalCount());
+        verify(houseMapper).countAvailableHouses(null, null, "Busan", 2);
+        verifyNoMoreInteractions(houseMapper);
     }
 
     @Test

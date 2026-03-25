@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.sds_guesthouse.model.dto.guest.GuestCheckResponseDto;
+import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 import com.sds_guesthouse.model.entity.Reservation;
@@ -115,6 +116,51 @@ class GuestIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(0));
 
         verify(houseService).getHouseImagePaths(2L);
+    }
+
+    @Test
+    @DisplayName("public house list endpoint returns paginated response")
+    void publicHouseList_withoutSession_returnsPaginatedResponse() throws Exception {
+        when(houseService.getAvailableHouses(null, null, null, null, 2)).thenReturn(
+                HouseListResponseDto.builder()
+                        .houses(List.of(
+                                House.builder()
+                                        .houseId(21L)
+                                        .hostId(2L)
+                                        .name("Page 2 House 1")
+                                        .address("Seoul")
+                                        .price(150000)
+                                        .maxGuests(4)
+                                        .description("page two")
+                                        .status(HouseStatus.APPROVED)
+                                        .build(),
+                                House.builder()
+                                        .houseId(22L)
+                                        .hostId(3L)
+                                        .name("Page 2 House 2")
+                                        .address("Busan")
+                                        .price(170000)
+                                        .maxGuests(2)
+                                        .description("page two")
+                                        .status(HouseStatus.APPROVED)
+                                        .build()
+                        ))
+                        .page(2)
+                        .totalPages(3)
+                        .totalCount(42L)
+                        .build()
+        );
+
+        mockMvc.perform(get("/api/v1/house").param("page", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page").value(2))
+                .andExpect(jsonPath("$.totalPages").value(3))
+                .andExpect(jsonPath("$.totalCount").value(42))
+                .andExpect(jsonPath("$.houses[0].houseId").value(21))
+                .andExpect(jsonPath("$.houses[0].name").value("Page 2 House 1"))
+                .andExpect(jsonPath("$.houses[1].houseId").value(22));
+
+        verify(houseService).getAvailableHouses(null, null, null, null, 2);
     }
 
     @Test

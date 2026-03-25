@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.dto.reservation.ReservationCreateRequestDto;
 import com.sds_guesthouse.model.entity.House;
@@ -92,13 +93,14 @@ public class HouseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<House>> getAvailableHouses(
+    public ResponseEntity<HouseListResponseDto> getAvailableHouses(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) Integer numberOfGuests
+            @RequestParam(required = false) Integer numberOfGuests,
+            @RequestParam(required = false) Integer page
     ) {
-        return ResponseEntity.ok(houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests));
+        return ResponseEntity.ok(houseService.getAvailableHouses(startDate, endDate, location, numberOfGuests, page));
     }
 
     @PostMapping(
@@ -120,4 +122,3 @@ public class HouseController {
         return ResponseEntity.ok(response);
     }
 }
-

@@ -27,5 +27,19 @@ public interface HouseMapper {
 
     int updateStatus(long houseId, HouseStatus status);
 
-    List<House> findAvailableHouses(LocalDate startDate, LocalDate endDate, String location, Integer numberOfGuests);
+    long countAvailableHouses(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("location") String location,
+            @Param("numberOfGuests") Integer numberOfGuests
+    );
+
+    List<House> findAvailableHouses(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("location") String location,
+            @Param("numberOfGuests") Integer numberOfGuests,
+            @Param("limit") int limit,
+            @Param("offset") long offset
+    );
 }

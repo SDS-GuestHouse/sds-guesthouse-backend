@@ -114,18 +114,7 @@
         WHERE house_id = #{houseId}
     </update>
 
-    <select id="findAvailableHouses" resultType="com.sds_guesthouse.model.entity.House">
-        SELECT
-            h.house_id AS houseId,
-            h.host_id AS hostId,
-            h.name,
-            h.address,
-            h.price,
-            h.max_guests AS maxGuests,
-            h.description,
-            h.status AS status,
-            h.created_at AS createdAt,
-            h.updated_at AS updatedAt
+    <sql id="availableHouseFilters">
         FROM houses h
         LEFT JOIN reservations r
             ON h.house_id = r.house_id
@@ -150,6 +139,29 @@
         <if test="startDate != null and endDate != null">
             AND r.reservation_id IS NULL
         </if>
+    </sql>
+
+    <select id="countAvailableHouses" resultType="long">
+        SELECT COUNT(*)
+        <include refid="availableHouseFilters" />
+    </select>
+
+    <select id="findAvailableHouses" resultType="com.sds_guesthouse.model.entity.House">
+        SELECT
+            h.house_id AS houseId,
+            h.host_id AS hostId,
+            h.name,
+            h.address,
+            h.price,
+            h.max_guests AS maxGuests,
+            h.description,
+            h.status AS status,
+            h.created_at AS createdAt,
+            h.updated_at AS updatedAt
+        <include refid="availableHouseFilters" />
+        ORDER BY h.created_at DESC
+        LIMIT #{limit}
+        OFFSET #{offset}
     </select>
 
 </mapper>
