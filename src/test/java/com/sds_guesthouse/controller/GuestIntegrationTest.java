@@ -197,6 +197,94 @@ class GuestIntegrationTest {
     }
 
     @Test
+    @DisplayName("host house creation accepts valid input")
+    void hostHouseCreate_validInput_returnsOk() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        mockMvc.perform(post("/api/v1/house")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(houseCreateRequest("House A", "Seoul", 120000L, "desc", 3)))
+                .andExpect(status().isOk());
+
+        verify(houseService).createHouse(any());
+    }
+
+    @Test
+    @DisplayName("host house creation rejects names longer than 50 characters")
+    void hostHouseCreate_nameLongerThan50_returnsBadRequest() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        expectCreateHouseBadRequest(session, "n".repeat(51), "Seoul", 120000L, "desc", 3);
+    }
+
+    @Test
+    @DisplayName("host house creation rejects addresses longer than 50 characters")
+    void hostHouseCreate_addressLongerThan50_returnsBadRequest() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        expectCreateHouseBadRequest(session, "House A", "a".repeat(51), 120000L, "desc", 3);
+    }
+
+    @Test
+    @DisplayName("host house creation rejects descriptions longer than 1000 characters")
+    void hostHouseCreate_descriptionLongerThan1000_returnsBadRequest() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        expectCreateHouseBadRequest(session, "House A", "Seoul", 120000L, "d".repeat(1001), 3);
+    }
+
+    @Test
+    @DisplayName("host house creation rejects prices below zero")
+    void hostHouseCreate_priceBelowZero_returnsBadRequest() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        expectCreateHouseBadRequest(session, "House A", "Seoul", -1L, "desc", 3);
+    }
+
+    @Test
+    @DisplayName("host house creation rejects prices above the upper boundary")
+    void hostHouseCreate_priceAboveUpperBoundary_returnsBadRequest() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        expectCreateHouseBadRequest(session, "House A", "Seoul", 1_000_000_001L, "desc", 3);
+    }
+
+    @Test
+    @DisplayName("host house creation accepts the lower price boundary")
+    void hostHouseCreate_priceZero_returnsOk() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        mockMvc.perform(post("/api/v1/house")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(houseCreateRequest("House A", "Seoul", 0L, "desc", 3)))
+                .andExpect(status().isOk());
+
+        verify(houseService).createHouse(any());
+    }
+
+    @Test
+    @DisplayName("host house creation accepts max lengths and the upper price boundary")
+    void hostHouseCreate_upperBoundaries_returnOk() throws Exception {
+        MockHttpSession session = authenticatedHostSession();
+
+        mockMvc.perform(post("/api/v1/house")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(houseCreateRequest(
+                                "n".repeat(50),
+                                "a".repeat(50),
+                                1_000_000_000L,
+                                "d".repeat(1000),
+                                3
+                        )))
+                .andExpect(status().isOk());
+
+        verify(houseService).createHouse(any());
+    }
+
+    @Test
     @DisplayName("host image upload returns success message and delegates to service")
     void hostImageUpload_success_returnsCurrentResponseContract() throws Exception {
         when(hostService.login(any())).thenReturn(sessionUser(2L, "host-user", "ROLE_HOST"));
@@ -287,6 +375,40 @@ class GuestIntegrationTest {
                             }
                             """))
                 .andExpect(status().isForbidden());
+    }
+
+    private void expectCreateHouseBadRequest(
+            MockHttpSession session,
+            String name,
+            String address,
+            long price,
+            String description,
+            int maxGuests
+    ) throws Exception {
+        mockMvc.perform(post("/api/v1/house")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(houseCreateRequest(name, address, price, description, maxGuests)))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(houseService);
+    }
+
+    private MockHttpSession authenticatedHostSession() throws Exception {
+        when(hostService.login(any())).thenReturn(sessionUser(2L, "host-user", "ROLE_HOST"));
+        return signInAsHost();
+    }
+
+    private String houseCreateRequest(String name, String address, long price, String description, int maxGuests) {
+        return """
+                {
+                  "name": "%s",
+                  "address": "%s",
+                  "price": %d,
+                  "description": "%s",
+                  "maxGuests": %d
+                }
+                """.formatted(name, address, price, description, maxGuests);
     }
 
     private MockHttpSession signInAsGuest() throws Exception {
