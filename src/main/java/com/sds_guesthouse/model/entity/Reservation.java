@@ -21,7 +21,7 @@ public class Reservation {
     private ReservationStatus status;  // 예약 상태 (pending, confirmed, cancelled, completed)
     private LocalDate checkinDate;  // 체크인 날짜
     private LocalDate checkoutDate; // 체크아웃 날짜
-    private int totalPrice;         // 예약 총 금액
+    private long totalPrice;        // 예약 총 금액
     private LocalDateTime createdAt;  // 생성일
     private LocalDateTime updatedAt;  // 수정일
 }

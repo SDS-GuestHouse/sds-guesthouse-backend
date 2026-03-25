@@ -26,4 +26,12 @@ public class ReservationCreateRequestDto {
         }
         return checkoutDate.isAfter(checkinDate);
     }
+
+    @AssertTrue(message = "stay period must not exceed 365 nights")
+    public boolean isStayLengthValid() {
+        if (checkinDate == null || checkoutDate == null) {
+            return true;
+        }
+        return !checkoutDate.isAfter(checkinDate.plusDays(365));
+    }
 }

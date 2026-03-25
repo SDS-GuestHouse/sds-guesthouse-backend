@@ -3,9 +3,10 @@ package com.sds_guesthouse.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -20,7 +21,7 @@ public class House {
     private Long hostId;
     private String name;
     private String address;
-    private int price;
+    private long price;
     private int maxGuests;
     private String description;
     private HouseStatus status;

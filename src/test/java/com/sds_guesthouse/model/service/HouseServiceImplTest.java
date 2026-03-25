@@ -44,7 +44,7 @@ class HouseServiceImplTest {
         when(sessionUserProvider.getCurrentUserId()).thenReturn(7L);
         when(houseMapper.insertHouse(any())).thenReturn(1);
 
-        houseService.createHouse(new HouseRequestDto("House A", "Seoul", 120000, "desc", 3));
+        houseService.createHouse(new HouseRequestDto("House A", "Seoul", 120000L, "desc", 3));
 
         ArgumentCaptor<House> captor = ArgumentCaptor.forClass(House.class);
         verify(houseMapper).insertHouse(captor.capture());
@@ -72,7 +72,7 @@ class HouseServiceImplTest {
 
         assertThrows(
                 AccessDeniedException.class,
-                () -> houseService.updateHouse(3L, new HouseRequestDto("House A", "Seoul", 120000, "desc", 3))
+                () -> houseService.updateHouse(3L, new HouseRequestDto("House A", "Seoul", 120000L, "desc", 3))
         );
     }
 
@@ -87,4 +87,3 @@ class HouseServiceImplTest {
         verify(houseImageService).uploadHouseImage(5L, file);
     }
 }
-

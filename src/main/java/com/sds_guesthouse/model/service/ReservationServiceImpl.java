@@ -50,6 +50,9 @@ public class ReservationServiceImpl implements ReservationService {
         if (nights <= 0) {
             throw new ExplicitMessageException("checkoutDate must be after checkinDate.");
         }
+        if (nights > 365) {
+            throw new ExplicitMessageException("stay period must not exceed 365 nights.");
+        }
 
         Reservation reservation = Reservation.builder()
                 .guestId(sessionUserProvider.getCurrentUserId())
@@ -57,7 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .status(ReservationStatus.PENDING)
                 .checkinDate(dto.getCheckinDate())
                 .checkoutDate(dto.getCheckoutDate())
-                .totalPrice(Math.toIntExact(nights * house.getPrice()))
+                .totalPrice(nights * house.getPrice())
                 .build();
 
         if (reservationMapper.insertReservation(reservation) == 0) {

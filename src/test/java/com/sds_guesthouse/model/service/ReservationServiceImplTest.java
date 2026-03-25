@@ -2,6 +2,7 @@ package com.sds_guesthouse.model.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dao.ReservationMapper;
 import com.sds_guesthouse.model.dto.reservation.ReservationCreateRequestDto;
@@ -45,7 +47,7 @@ class ReservationServiceImplTest {
         LocalDate checkin = LocalDate.of(2026, 4, 10);
         LocalDate checkout = LocalDate.of(2026, 4, 12);
         when(sessionUserProvider.getCurrentUserId()).thenReturn(11L);
-        when(houseMapper.findById(5L)).thenReturn(House.builder().houseId(5L).price(120000).status(HouseStatus.APPROVED).build());
+        when(houseMapper.findById(5L)).thenReturn(House.builder().houseId(5L).price(120000L).status(HouseStatus.APPROVED).build());
         when(reservationMapper.countOverlappingActiveReservations(5L, checkin, checkout)).thenReturn(0);
         when(reservationMapper.insertReservation(any())).thenReturn(1);
 
@@ -58,7 +60,41 @@ class ReservationServiceImplTest {
         assertEquals(11L, savedReservation.getGuestId());
         assertEquals(5L, savedReservation.getHouseId());
         assertEquals(ReservationStatus.PENDING, savedReservation.getStatus());
-        assertEquals(240000, savedReservation.getTotalPrice());
+        assertEquals(240000L, savedReservation.getTotalPrice());
+    }
+
+    @Test
+    void reserveHouse_supportsLongTotalPriceAtBoundary() {
+        LocalDate checkin = LocalDate.of(2026, 1, 1);
+        LocalDate checkout = checkin.plusDays(365);
+        when(sessionUserProvider.getCurrentUserId()).thenReturn(11L);
+        when(houseMapper.findById(5L)).thenReturn(
+                House.builder().houseId(5L).price(1_000_000_000L).status(HouseStatus.APPROVED).build()
+        );
+        when(reservationMapper.countOverlappingActiveReservations(5L, checkin, checkout)).thenReturn(0);
+        when(reservationMapper.insertReservation(any())).thenReturn(1);
+
+        reservationService.reserveHouse(5L, new ReservationCreateRequestDto(checkin, checkout));
+
+        ArgumentCaptor<Reservation> captor = ArgumentCaptor.forClass(Reservation.class);
+        verify(reservationMapper).insertReservation(captor.capture());
+
+        assertEquals(365_000_000_000L, captor.getValue().getTotalPrice());
+    }
+
+    @Test
+    void reserveHouse_rejectsStayLongerThan365Nights() {
+        LocalDate checkin = LocalDate.of(2026, 1, 1);
+        LocalDate checkout = checkin.plusDays(366);
+        when(houseMapper.findById(5L)).thenReturn(House.builder().houseId(5L).price(120000L).status(HouseStatus.APPROVED).build());
+        when(reservationMapper.countOverlappingActiveReservations(5L, checkin, checkout)).thenReturn(0);
+
+        ExplicitMessageException exception = assertThrows(
+                ExplicitMessageException.class,
+                () -> reservationService.reserveHouse(5L, new ReservationCreateRequestDto(checkin, checkout))
+        );
+
+        assertEquals("stay period must not exceed 365 nights.", exception.getMessage());
     }
 
     @Test
