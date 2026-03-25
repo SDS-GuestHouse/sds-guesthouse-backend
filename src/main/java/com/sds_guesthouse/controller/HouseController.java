@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
+import com.sds_guesthouse.model.dto.house.HouseResponseDto;
 import com.sds_guesthouse.model.dto.reservation.ReservationCreateRequestDto;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.Reservation;
@@ -45,7 +46,7 @@ public class HouseController {
     }
 
     @GetMapping("/{houseId}")
-    public ResponseEntity<House> getHouseDetail(@PathVariable Long houseId) {
+    public ResponseEntity<HouseResponseDto> getHouseDetail(@PathVariable Long houseId) {
         return ResponseEntity.ok(houseService.getHouseDetail(houseId));
     }
 

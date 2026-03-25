@@ -116,16 +116,6 @@
 
     <sql id="availableHouseFilters">
         FROM houses h
-        LEFT JOIN reservations r
-            ON h.house_id = r.house_id
-            <if test="startDate != null and endDate != null">
-                AND (
-                    <![CDATA[
-                    (r.checkin_date < #{endDate} AND r.checkout_date > #{startDate})
-                    ]]>
-                )
-                AND r.status != 'CANCELLED'
-            </if>
         WHERE h.status = 'APPROVED'
 
         <if test="numberOfGuests != null and numberOfGuests > 0">
@@ -137,7 +127,13 @@
         </if>
 
         <if test="startDate != null and endDate != null">
-            AND r.reservation_id IS NULL
+            AND NOT EXISTS (
+                SELECT 1
+                FROM reservations r
+                WHERE r.house_id = h.house_id
+                  AND r.status != 'CANCELLED'
+                  AND <![CDATA[(r.checkin_date < #{endDate} AND r.checkout_date > #{startDate})]]>
+            )
         </if>
     </sql>
 
