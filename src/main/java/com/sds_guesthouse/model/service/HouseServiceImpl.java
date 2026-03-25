@@ -2,6 +2,7 @@ package com.sds_guesthouse.model.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -11,7 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.dao.ReservationMapper;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
+import com.sds_guesthouse.model.dto.house.HouseResponseDto;
+import com.sds_guesthouse.model.entity.CheckInOut;
 import com.sds_guesthouse.model.entity.House;
 import com.sds_guesthouse.model.entity.HouseStatus;
 import com.sds_guesthouse.model.entity.Reservation;
@@ -26,6 +30,7 @@ public class HouseServiceImpl implements HouseService {
     private final HouseMapper houseMapper;
     private final HouseImageService houseImageService;
     private final SessionUserProvider sessionUserProvider;
+    
 
     @Override
     @Transactional
@@ -46,12 +51,19 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public House getHouseDetail(Long houseId) {
+    public HouseResponseDto getHouseDetail(Long houseId) {
         House house = houseMapper.findById(houseId);
         if (house == null) {
             throw new ExplicitMessageException("House not found.");
         }
-        return house;
+        HouseResponseDto response = HouseResponseDto.fromHouse(house);
+        List<Reservation> reservations = houseMapper.findReservationsByHouseId(houseId);
+        List<CheckInOut> checkInOuts = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+        	checkInOuts.add(new CheckInOut(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        }
+        response.setCheckInOutList(checkInOuts);
+        return response;
     }
 
     @Override

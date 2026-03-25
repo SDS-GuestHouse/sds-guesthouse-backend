@@ -114,42 +114,38 @@
         WHERE house_id = #{houseId}
     </update>
 
-    <select id="findAvailableHouses" resultType="com.sds_guesthouse.model.entity.House">
-        SELECT
-            h.house_id AS houseId,
-            h.host_id AS hostId,
-            h.name,
-            h.address,
-            h.price,
-            h.max_guests AS maxGuests,
-            h.description,
-            h.status AS status,
-            h.created_at AS createdAt,
-            h.updated_at AS updatedAt
-        FROM houses h
-        LEFT JOIN reservations r
-            ON h.house_id = r.house_id
-            <if test="startDate != null and endDate != null">
-                AND (
-                    <![CDATA[
-                    (r.checkin_date < #{endDate} AND r.checkout_date > #{startDate})
-                    ]]>
-                )
-                AND r.status != 'CANCELLED'
-            </if>
-        WHERE h.status = 'APPROVED'
-
-        <if test="numberOfGuests != null and numberOfGuests > 0">
-            AND h.max_guests >= #{numberOfGuests}
-        </if>
-
-        <if test="location != null and location != ''">
-            AND h.address LIKE CONCAT('%', #{location}, '%')
-        </if>
-
-        <if test="startDate != null and endDate != null">
-            AND r.reservation_id IS NULL
-        </if>
-    </select>
+	<select id="findAvailableHouses" resultType="com.sds_guesthouse.model.entity.House">
+	    SELECT
+	        h.house_id AS houseId,
+	        h.host_id AS hostId,
+	        h.name,
+	        h.address,
+	        h.price,
+	        h.max_guests AS maxGuests,
+	        h.description,
+	        h.status AS status,
+	        h.created_at AS createdAt,
+	        h.updated_at AS updatedAt
+	    FROM houses h
+	    WHERE h.status = 'APPROVED'
+	
+	    <if test="numberOfGuests != null and numberOfGuests > 0">
+	        AND h.max_guests >= #{numberOfGuests}
+	    </if>
+	
+	    <if test="location != null and location != ''">
+	        AND h.address LIKE CONCAT('%', #{location}, '%')
+	    </if>
+	
+	    <if test="startDate != null and endDate != null">
+	        AND NOT EXISTS (
+	            SELECT 1 
+	            FROM reservations r
+	            WHERE r.house_id = h.house_id
+	              AND r.status != 'CANCELLED'
+	              AND <![CDATA[ (r.checkin_date < #{endDate} AND r.checkout_date > #{startDate}) ]]>
+	        )
+	    </if>
+	</select>
 
 </mapper>
