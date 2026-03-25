@@ -105,6 +105,7 @@ public class SecurityConfig {
         	        .requestMatchers(HttpMethod.PUT, "/api/v1/house/{id}").hasRole("HOST")
         	        .requestMatchers(HttpMethod.DELETE, "/api/v1/house/{id}").hasRole("HOST")
         	        .requestMatchers(HttpMethod.GET, "/api/v1/house/{id}/reservation").hasRole("HOST")
+        	        .requestMatchers(HttpMethod.GET, "/api/v1/house/{id}/image").permitAll()
         	        .requestMatchers(HttpMethod.GET, "/api/v1/house", "/api/v1/house/{houseId}").permitAll()
         	        
         	        .requestMatchers(HttpMethod.GET, "/api/v1/reservation").hasRole("GUEST")

@@ -16,4 +16,11 @@
         VALUES (#{houseId}, #{imagePath}, #{display_order}, NOW(), NOW())
     </insert>
 
+    <select id="findImagePathsByHouseId" resultType="java.lang.String">
+        SELECT image_path
+        FROM house_images
+        WHERE house_id = #{houseId}
+        ORDER BY `display_order` ASC
+    </select>
+
 </mapper>

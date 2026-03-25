@@ -48,6 +48,11 @@ public class HouseController {
         return ResponseEntity.ok(houseService.getHouseDetail(houseId));
     }
 
+    @GetMapping("/{houseId}/image")
+    public ResponseEntity<List<String>> getHouseImagePaths(@PathVariable Long houseId) {
+        return ResponseEntity.ok(houseService.getHouseImagePaths(houseId));
+    }
+
     @GetMapping("/my-house")
     public ResponseEntity<List<House>> getMyHouses() {
         return ResponseEntity.ok(houseService.getMyHouses());
@@ -115,3 +120,4 @@ public class HouseController {
         return ResponseEntity.ok(response);
     }
 }
+

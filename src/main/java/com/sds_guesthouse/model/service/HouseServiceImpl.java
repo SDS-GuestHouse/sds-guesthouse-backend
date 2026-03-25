@@ -55,6 +55,12 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
+    public List<String> getHouseImagePaths(Long houseId) {
+        getHouseDetail(houseId);
+        return houseImageService.getHouseImagePaths(houseId);
+    }
+
+    @Override
     public List<House> getMyHouses() {
         return houseMapper.findByHostId(sessionUserProvider.getCurrentUserId());
     }
