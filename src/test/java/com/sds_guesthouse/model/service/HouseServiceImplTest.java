@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.entity.House;
@@ -63,6 +64,28 @@ class HouseServiceImplTest {
 
         assertSame(houses, houseService.getMyHouses());
         verify(houseMapper).findByHostId(7L);
+    }
+
+    @Test
+    void getHouseImagePaths_returnsStoredPathsForExistingHouse() {
+        List<String> imagePaths = List.of("uuid-a.jpg", "uuid-b.jpg");
+        when(houseMapper.findById(3L)).thenReturn(House.builder().houseId(3L).hostId(2L).status(HouseStatus.APPROVED).build());
+        when(houseImageService.getHouseImagePaths(3L)).thenReturn(imagePaths);
+
+        assertSame(imagePaths, houseService.getHouseImagePaths(3L));
+        verify(houseImageService).getHouseImagePaths(3L);
+    }
+
+    @Test
+    void getHouseImagePaths_throwsWhenHouseIsMissing() {
+        when(houseMapper.findById(9L)).thenReturn(null);
+
+        ExplicitMessageException thrown = assertThrows(
+                ExplicitMessageException.class,
+                () -> houseService.getHouseImagePaths(9L)
+        );
+
+        assertEquals("House not found.", thrown.getMessage());
     }
 
     @Test

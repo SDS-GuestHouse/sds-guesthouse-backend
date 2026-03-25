@@ -92,6 +92,32 @@ class GuestIntegrationTest {
     }
 
     @Test
+    @DisplayName("public house image path endpoint returns stored image paths")
+    void publicHouseImagePathEndpoint_returnsImagePaths() throws Exception {
+        when(houseService.getHouseImagePaths(1L)).thenReturn(List.of("uuid-a.jpg", "uuid-b.jpg"));
+
+        mockMvc.perform(get("/api/v1/house/1/image"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value("uuid-a.jpg"))
+                .andExpect(jsonPath("$[1]").value("uuid-b.jpg"));
+
+        verify(houseService).getHouseImagePaths(1L);
+    }
+
+    @Test
+    @DisplayName("public house image path endpoint returns empty array when house has no images")
+    void publicHouseImagePathEndpoint_returnsEmptyArray() throws Exception {
+        when(houseService.getHouseImagePaths(2L)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/house/2/image"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(houseService).getHouseImagePaths(2L);
+    }
+
+    @Test
     @DisplayName("guest session can use guest-only reservation endpoints")
     void guestSession_canUseGuestEndpoints() throws Exception {
         when(guestService.signInGuest(any())).thenReturn(sessionUser(1L, "guest-user", "ROLE_GUEST"));

@@ -15,6 +15,8 @@ public interface HouseService {
 
     House getHouseDetail(Long houseId);
 
+    List<String> getHouseImagePaths(Long houseId);
+
     List<House> getMyHouses();
 
     void updateHouse(Long houseId, HouseRequestDto dto);

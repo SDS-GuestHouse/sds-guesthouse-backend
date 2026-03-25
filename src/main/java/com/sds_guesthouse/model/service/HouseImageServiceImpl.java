@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -48,5 +49,10 @@ public class HouseImageServiceImpl implements HouseImageService {
             Files.deleteIfExists(filePath);
             throw new IOException("Failed to upload house image.", e);
         }
+    }
+
+    @Override
+    public List<String> getHouseImagePaths(Long houseId) {
+        return houseImageMapper.findImagePathsByHouseId(houseId);
     }
 }

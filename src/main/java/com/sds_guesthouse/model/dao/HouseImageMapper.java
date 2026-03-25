@@ -1,5 +1,7 @@
 package com.sds_guesthouse.model.dao;
 
+import java.util.List;
+
 import com.sds_guesthouse.model.entity.HouseImage;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,6 +14,8 @@ public interface HouseImageMapper {
 
     // 이미지 업로드 및 DB 저장
     void insertHouseImage(HouseImage houseImage);
+
+    List<String> findImagePathsByHouseId(@Param("houseId") Long houseId);
 
     // 이미지 order 업데이트 (필요할 경우)
     void updateHouseImageOrder(@Param("houseId") Long houseId);
