@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sds_guesthouse.model.dto.house.HouseCreateResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.dto.house.HouseResponseDto;
@@ -40,9 +41,9 @@ public class HouseController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Void> createHouse(@Valid @RequestBody HouseRequestDto dto) {
-        houseService.createHouse(dto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<HouseCreateResponseDto> createHouse(@Valid @RequestBody HouseRequestDto dto) {
+        HouseCreateResponseDto response = houseService.createHouse(dto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{houseId}")

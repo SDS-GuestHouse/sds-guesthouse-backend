@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sds_guesthouse.exception.ExplicitMessageException;
 import com.sds_guesthouse.model.dao.HouseMapper;
+import com.sds_guesthouse.model.dto.house.HouseCreateResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseListResponseDto;
 import com.sds_guesthouse.model.dto.house.HouseRequestDto;
 import com.sds_guesthouse.model.dto.house.HouseResponseDto;
@@ -35,7 +36,7 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     @Transactional
-    public void createHouse(HouseRequestDto dto) {
+    public HouseCreateResponseDto createHouse(HouseRequestDto dto) {
         House house = House.builder()
                 .hostId(sessionUserProvider.getCurrentUserId())
                 .name(dto.getName())
@@ -49,6 +50,8 @@ public class HouseServiceImpl implements HouseService {
         if (houseMapper.insertHouse(house) == 0) {
             throw new ExplicitMessageException("Failed to create house.");
         }
+        
+        return HouseCreateResponseDto.builder().houseId(house.getHouseId()).build();
     }
 
     @Override

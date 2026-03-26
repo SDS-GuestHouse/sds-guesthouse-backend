@@ -40,12 +40,15 @@ public class HouseImageServiceImpl implements HouseImageService {
         String imagePath = UUID.randomUUID() + ".jpg";
 
         try {
+        	System.out.println("debug1");
             saveImageFile(imageFile, imagePath);
-
+        	System.out.println("debug2");
             HouseImage houseImage = new HouseImage(null, houseId, imagePath, displayOrder, null, null);
+        	System.out.println("debug3");
             houseImageMapper.insertHouseImage(houseImage);
         } catch (Exception e) {
-            Path filePath = Paths.get("uploads/house_images", imagePath);
+        	e.printStackTrace();
+        	Path filePath = Paths.get("uploads/house_images", imagePath);
             Files.deleteIfExists(filePath);
             throw new IOException("Failed to upload house image.", e);
         }

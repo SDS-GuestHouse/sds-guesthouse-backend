@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -111,7 +112,8 @@ public class SecurityConfig {
                                 HttpMethod.GET,
                                 "/api/v1/house",
                                 "/api/v1/house/{houseId}",
-                                "/api/v1/house/{houseId}/image"
+                                "/api/v1/house/{houseId}/image",
+                                "/api/v1/house_image/{filename}"
                         ).permitAll()
                         .anyRequest().denyAll()
 //                      .anyRequest().permitAll()
