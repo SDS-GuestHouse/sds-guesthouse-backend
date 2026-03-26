@@ -73,3 +73,6 @@ application-local.properties
 application-secret.yml
 application-secret.yaml
 application-secret.properties
+
+
+uploads/
